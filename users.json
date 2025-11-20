@@ -1,0 +1,12 @@
+{
+  "bestroadways": {
+    "password": "sg@1234",
+    "name": "Best Roadways",
+    "isAdmin": true
+  },
+  "admin": {
+    "password": "sg@bestroadways",
+    "name": "Administrator",
+    "isAdmin": true
+  }
+}
