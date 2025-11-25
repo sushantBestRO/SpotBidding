@@ -1,0 +1,15 @@
+[
+  {
+    "timestamp": "2025-08-07T14:30:57.230Z",
+    "context": "Bid submission for 25080784V8",
+    "error": {
+      "message": "timeout of 5000ms exceeded",
+      "stack": "AxiosError: timeout of 5000ms exceeded\n    at RedirectableRequest.handleRequestTimeout (/root/node_modules/axios/dist/node/axios.cjs:3265:16)\n    at RedirectableRequest.emit (node:events:517:28)\n    at Timeout.<anonymous> (/root/node_modules/follow-redirects/index.js:221:12)\n    at listOnTimeout (node:internal/timers:569:17)\n    at process.processTimers (node:internal/timers:512:7)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at runNextTicks (node:internal/process/task_queues:60:5)\n    at listOnTimeout (node:internal/timers:538:9)\n    at process.processTimers (node:internal/timers:512:7)\n    at async submitBid (/root/server.js:1167:24)\n    at async submitBidWithRetry (/root/server.js:1126:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1287:11)",
+      "code": "ECONNABORTED"
+    },
+    "enquiryKey": "25080784V8",
+    "bidType": "HIGH",
+    "bidPrice": "51850",
+    "quoteId": "10045b20-41b9-42ff-b646-d1a9e48f5dc3"
+  }
+]

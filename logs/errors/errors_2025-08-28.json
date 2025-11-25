@@ -1,0 +1,431 @@
+[
+  {
+    "timestamp": "2025-08-28T08:49:50.422Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid (/root/server.js:1970:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "MEDIUM",
+    "bidPrice": 21352,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:50.854Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid (/root/server.js:1970:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "MEDIUM",
+    "bidPrice": 21352,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:51.308Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid (/root/server.js:1970:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "MEDIUM",
+    "bidPrice": 21352,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:51.546Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1970:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "MEDIUM",
+    "bidPrice": 21352,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:52.312Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1970:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "MEDIUM",
+    "bidPrice": 21352,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:52.799Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1970:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "MEDIUM",
+    "bidPrice": 21352,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:53.005Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1957:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "HIGH",
+    "bidPrice": 21746,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:53.540Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1957:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "HIGH",
+    "bidPrice": 21746,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:54.042Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1957:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "HIGH",
+    "bidPrice": 21746,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:54.294Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1957:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "HIGH",
+    "bidPrice": 21746,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:54.725Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1957:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "HIGH",
+    "bidPrice": 21746,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:55.582Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1957:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "HIGH",
+    "bidPrice": 21746,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:55.766Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1970:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "MEDIUM",
+    "bidPrice": 21352,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:56.210Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1970:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "MEDIUM",
+    "bidPrice": 21352,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:56.678Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1970:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "MEDIUM",
+    "bidPrice": 21352,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:56.999Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1970:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "MEDIUM",
+    "bidPrice": 21352,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:57.422Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1970:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "MEDIUM",
+    "bidPrice": 21352,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:58.120Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1970:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "MEDIUM",
+    "bidPrice": 21352,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:49:58.443Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid [as _onTimeout] (/root/server.js:1957:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "HIGH",
+    "bidPrice": 21746,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:50:00.045Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid (/root/server.js:1957:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "HIGH",
+    "bidPrice": 21746,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T08:50:00.708Z",
+    "context": "Bid submission for 2508285Q2F",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid (/root/server.js:1957:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508285Q2F",
+    "bidType": "HIGH",
+    "bidPrice": 21746,
+    "quoteId": "ee1d849b-7f42-40d9-8af5-080186349c0a"
+  },
+  {
+    "timestamp": "2025-08-28T10:30:01.211Z",
+    "context": "Bid submission for 2508282F3I",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid (/root/server.js:1982:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508282F3I",
+    "bidType": "LOW",
+    "bidPrice": 52385,
+    "quoteId": "ed158450-e128-4189-86e0-9b57cdd006da"
+  },
+  {
+    "timestamp": "2025-08-28T10:30:02.271Z",
+    "context": "Bid submission for 2508282F3I",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid (/root/server.js:1982:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508282F3I",
+    "bidType": "LOW",
+    "bidPrice": 52385,
+    "quoteId": "ed158450-e128-4189-86e0-9b57cdd006da"
+  },
+  {
+    "timestamp": "2025-08-28T10:30:04.913Z",
+    "context": "Bid submission for 2508282F3I",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid (/root/server.js:1982:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508282F3I",
+    "bidType": "LOW",
+    "bidPrice": 52385,
+    "quoteId": "ed158450-e128-4189-86e0-9b57cdd006da"
+  },
+  {
+    "timestamp": "2025-08-28T10:55:03.595Z",
+    "context": "Bid submission for 2508288WVK",
+    "error": {
+      "message": "timeout of 5000ms exceeded",
+      "stack": "AxiosError: timeout of 5000ms exceeded\n    at RedirectableRequest.handleRequestTimeout (/root/node_modules/axios/dist/node/axios.cjs:3265:16)\n    at RedirectableRequest.emit (node:events:517:28)\n    at Timeout.<anonymous> (/root/node_modules/follow-redirects/index.js:221:12)\n    at listOnTimeout (node:internal/timers:569:17)\n    at process.processTimers (node:internal/timers:512:7)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid (/root/server.js:1982:11)",
+      "code": "ECONNABORTED"
+    },
+    "enquiryKey": "2508288WVK",
+    "bidType": "LOW",
+    "bidPrice": 36670,
+    "quoteId": "1619cda9-f346-4224-aa1d-a055849d2e0a"
+  },
+  {
+    "timestamp": "2025-08-28T10:55:13.353Z",
+    "context": "Bid submission for 2508288WVK",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid (/root/server.js:1982:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508288WVK",
+    "bidType": "LOW",
+    "bidPrice": 36670,
+    "quoteId": "1619cda9-f346-4224-aa1d-a055849d2e0a"
+  },
+  {
+    "timestamp": "2025-08-28T10:55:13.794Z",
+    "context": "Bid submission for 2508288WVK",
+    "error": {
+      "message": "Request failed with status code 422",
+      "stack": "AxiosError: Request failed with status code 422\n    at settle (/root/node_modules/axios/dist/node/axios.cjs:2090:12)\n    at IncomingMessage.handleStreamEnd (/root/node_modules/axios/dist/node/axios.cjs:3207:11)\n    at IncomingMessage.emit (node:events:529:35)\n    at endReadableNT (node:internal/streams/readable:1400:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)\n    at Axios.request (/root/node_modules/axios/dist/node/axios.cjs:4317:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async submitBid (/root/server.js:1830:24)\n    at async submitBidWithRetry (/root/server.js:1775:19)\n    at async Timeout.checkAndBid (/root/server.js:1982:11)",
+      "code": "ERR_BAD_REQUEST",
+      "response": {
+        "error": "Validation failed: Cannot Submit Quote either the enquiry is closed or you have reached maximum revision limit"
+      }
+    },
+    "enquiryKey": "2508288WVK",
+    "bidType": "LOW",
+    "bidPrice": 36670,
+    "quoteId": "1619cda9-f346-4224-aa1d-a055849d2e0a"
+  }
+]
