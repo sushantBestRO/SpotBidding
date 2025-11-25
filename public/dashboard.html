@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoComet Bidder - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-section">
+                <div class="logo">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" stroke="#4CAF50" stroke-width="2"/>
+                        <path d="M15 20L18 23L25 16" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h1>GoComet Bidder</h1>
+            </div>
+            <div class="header-actions">
+                <div class="user-info-header">
+                    <span id="username-display"></span>
+                </div>
+                <a href="/settings" id="settingsLink" class="btn btn-secondary btn-small" style="display: none;">Settings</a>
+                <button id="logoutBtn" class="btn-logout">Logout</button>
+            </div>
+        </header>
+
+        <main>
+            <div class="auth-section" id="authSection" style="display: none;">
+                <div class="auth-box">
+                    <h3>GoComet Authentication Required</h3>
+                    <div class="auth-tabs">
+                        <button class="auth-tab active" data-tab="chrome">Chrome Login</button>
+                        <button class="auth-tab" data-tab="token">Direct Token</button>
+                    </div>
+                    
+                    <div id="chromeAuth" class="auth-content active">
+                        <p>Please enter your GoComet email to authenticate.</p>
+                        <div class="email-section" id="emailSection">
+                            <input type="email" id="emailInput" placeholder="Enter your GoComet email" class="email-input" />
+                            <button id="authenticateBtn" class="btn btn-primary">Authenticate with Chrome</button>
+                        </div>
+                        <div class="otp-section" id="otpSection" style="display: none;">
+                            <p class="otp-message">An OTP has been sent to your email. Please enter it below:</p>
+                            <input type="text" id="otpInput" placeholder="Enter OTP" class="otp-input" maxlength="6" />
+                            <button id="submitOtpBtn" class="btn btn-primary">Verify OTP</button>
+                            <button id="cancelOtpBtn" class="btn btn-secondary btn-small">Cancel</button>
+                        </div>
+                        <p class="auth-note" id="authNote">Chrome will run in the background. An OTP will be sent to your email.</p>
+                    </div>
+                    
+                    <div id="tokenAuth" class="auth-content">
+                        <p>Paste your GoComet authorization token directly.</p>
+                        <div class="token-section">
+                            <textarea id="tokenInput" placeholder="eyJhbGciOiJIUzI1NiJ9..." class="token-input"></textarea>
+                            <button id="saveTokenBtn" class="btn btn-primary">Save Token</button>
+                        </div>
+                        <p class="auth-note">You can find the token in your browser's network tab after logging into GoComet. Look for the Authorization header in any API request.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content" id="dashboardContent">
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Open Queries:</span>
+                        <span class="stat-value" id="totalQueries">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Last Updated:</span>
+                        <span class="stat-value" id="lastUpdated">--:--:--</span>
+                    </div>
+                    <div class="stat-item">
+                        <button id="refreshBtn" class="btn btn-small">Refresh</button>
+                        <button id="viewLogsBtn" class="btn btn-small" onclick="toggleLogs()">View Logs</button>
+                    </div>
+                </div>
+
+                <div class="quotes-container" id="quotesContainer">
+                    <div class="loading">Loading quotes...</div>
+                </div>
+                
+                <div class="logs-container" id="logsContainer" style="display: none;">
+                    <h3>Bid Logs</h3>
+                    <div id="bidLogs" class="logs-content"></div>
+                    <h3>Error Logs</h3>
+                    <div id="errorLogs" class="logs-content"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Version 2.0.0 | Created by Saksham Solanki</p>
+        </footer>
+    </div>
+
+
+    <script src="dashboard.js?v=18"></script>
+</body>
+</html>

@@ -1,0 +1,428 @@
+Request URL
+https://enquiry.gocomet.com/api/v1/vendor/quotes/6cc664cb-72e1-4fda-9f67-5d66e7b48851/submit?
+Request Method
+PUT
+Status Code
+200 OK
+Remote Address
+35.244.17.137:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-headers
+DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,,If-Modified-Since,Cache-Control,Content-Type,Authorization,Schema,,X-Gocomet-Tech,Ops-Client-Schema,X-Csrf-Token
+access-control-allow-methods
+GET, POST, OPTIONS, PUT, PATCH, DELETE
+access-control-allow-origin
+https://app.gocomet.com
+cache-control
+max-age=0, private, must-revalidate
+content-encoding
+gzip
+content-type
+application/json
+date
+Fri, 08 Aug 2025 13:13:32 GMT
+etag
+W/"6723af18eba532268245e26f82d7a3a0"
+strict-transport-security
+max-age=15724800; includeSubDomains
+vary
+Accept-Encoding
+x-content-type-options
+nosniff
+x-envoy-upstream-service-time
+796
+x-frame-options
+SAMEORIGIN
+x-ingress-name
+gocomet-app-public-timeout
+x-request-id
+a7b1dc214d0092a91559e45e1322597e
+x-runtime
+0.793329
+x-xss-protection
+1; mode=block
+:authority
+enquiry.gocomet.com
+:method
+PUT
+:path
+/api/v1/vendor/quotes/6cc664cb-72e1-4fda-9f67-5d66e7b48851/submit?
+:scheme
+https
+accept
+application/json
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+en-US,en;q=0.9
+authorization
+eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiODdlY2FjYTEtNzlkNi00MDAxLTg0YzYtZDQzM2NjNzdlMjMyIiwidW5pcV90b2tlbiI6IjA1YmZkZTBhLWI0YjItNGExNS05NTI2LWZiOGJhYTM1OTEwZCIsInRva2VuX3R5cGUiOiJ3ZWIiLCJjbGllbnRfaWQiOiIxNTJiZjJjMi1hYWM0LTQ4NmEtODVhMS0yMjkyNDJlNDE1NzMiLCJleHAiOjE3NTcwNjE5NDF9.Yvd-Rbt-hK9iqdM_qblSkNunlpYdbqHS2R22i-sHIOQ
+cache-control
+no-cache
+content-length
+6999
+content-type
+application/json
+cookie
+_gcl_au=1.1.600502754.1753517104; stay_signed_in=true; _hjSessionUser_2425614=eyJpZCI6IjNhMmE5MmMzLWE3ZTktNTA5MS04NThmLTZmM2ZlZTEwM2JmOSIsImNyZWF0ZWQiOjE3NTM1NTMyMTI2OTEsImV4aXN0aW5nIjp0cnVlfQ==; _hjSessionUser_2746649=eyJpZCI6ImY0MTRjZmVjLTQ0MDMtNWUxYy1hMjUyLTk5YmVhNmYwYjZhMyIsImNyZWF0ZWQiOjE3NTM1MTcxMDQzMTcsImV4aXN0aW5nIjp0cnVlfQ==; user=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiODdlY2FjYTEtNzlkNi00MDAxLTg0YzYtZDQzM2NjNzdlMjMyIiwidW5pcV90b2tlbiI6IjA1YmZkZTBhLWI0YjItNGExNS05NTI2LWZiOGJhYTM1OTEwZCIsInRva2VuX3R5cGUiOiJ3ZWIiLCJjbGllbnRfaWQiOiIxNTJiZjJjMi1hYWM0LTQ4NmEtODVhMS0yMjkyNDJlNDE1NzMiLCJleHAiOjE3NTcwNjE5NDF9.Yvd-Rbt-hK9iqdM_qblSkNunlpYdbqHS2R22i-sHIOQ; schema_name=app; user_type=vendor; _hjSessionUser_2520392=eyJpZCI6ImY3ZTQxYjgyLThmZGEtNWYwYS05NWYzLWFiN2ZmNjY3ZWNhYyIsImNyZWF0ZWQiOjE3NTQ0Njk5NDgzNTQsImV4aXN0aW5nIjpmYWxzZX0=; _gid=GA1.2.1311490425.1754631870; _hjSession_2425614=eyJpZCI6IjA1MmZjN2U1LTdhYjQtNGQwMi04MTFjLWVhMWJmNzc1YmJlMCIsImMiOjE3NTQ2NTc5MDYzMTUsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; _ga_D1FBP02315=GS2.1.s1754657906$o24$g1$t1754658003$j60$l0$h1680725936; _ga=GA1.2.142649515.1753517104; _csrf_token=46aada7420200de064fa4550; mp_8d01ffee95c627743736f2eba248d364_mixpanel=%7B%22distinct_id%22%3A%2287ecaca1-79d6-4001-84c6-d433cc77e232%22%2C%22%24device_id%22%3A%224bc0c641-b629-47ce-929c-77b8db3e34fd%22%2C%22%24initial_referrer%22%3A%22%24direct%22%2C%22%24initial_referring_domain%22%3A%22%24direct%22%2C%22__mps%22%3A%7B%7D%2C%22__mpso%22%3A%7B%7D%2C%22__mpus%22%3A%7B%7D%2C%22__mpa%22%3A%7B%7D%2C%22__mpu%22%3A%7B%7D%2C%22__mpr%22%3A%5B%5D%2C%22__mpap%22%3A%5B%5D%2C%22%24user_id%22%3A%2287ecaca1-79d6-4001-84c6-d433cc77e232%22%7D
+ops-client-schema
+app
+origin
+https://app.gocomet.com
+pragma
+no-cache
+priority
+u=1, i
+referer
+https://app.gocomet.com/
+schema
+app
+sec-ch-ua
+"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-site
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36
+x-csrf-token
+46aada7420200de064fa4550
+
+PAYLOAD:
+
+{"quote":{"id":"6cc664cb-72e1-4fda-9f67-5d66e7b48851","key":"5OZ5KQ","editing_enabled":false,"remarks":"","trans_ship":null,"valid_till":null,"can_submit_quote":true,"enquiry_vendor_id":"d46f4cc4-0cba-4b31-a6f8-5a016a8ded02","comments":null,"status":"draft","deleted":false,"transport_transit_time":null,"transit_time":null,"detention_free_time_at_origin":null,"detention_free_time_at_destination":null,"detention_free_time_at_destination_unit":"hours","free_days_at_warehouse_at_destination":null,"free_days_at_warehouse_at_origin":null,"combined_free_time_at_destination":null,"combined_free_time_at_origin":null,"demurrage_free_time_at_origin":null,"demurrage_free_time_at_destination":null,"free_days_at_destination":null,"allocated_quantity":null,"updated_at":"2025-08-08T17:39:45.399+05:30","created_at":"2025-08-08T17:39:45.399+05:30","confirmed_by":null,"approved_by":null,"approval_matrix":[],"can_decline_quote":true,"decline_reason_type":null,"invalid_quote_remarks":null,"enquiry_id":"52692ba3-7db7-4df2-aac3-a6a3389cd8a1","charges_list":{"11_freight_charges":{"freight_charges_custom_charge_40ft_(lxwxh_-_40'x8'x8'8\")_22_ton":{"price":"71500","units":5,"tax_id":"0","taxable":"1","currency":"INR","non_zero":false,"priority":11,"required":true,"at_actual":"0","is_hidden":false,"unit_name":"TRUCK TON 22 40'X8'X8'8\") - (LXWXH 40FT","slab_rates":null,"display_name":"Freight Charges 40FT (LxWXH - 40'x8'x8'8\") 22 Ton Truck","split_charge":false,"tax_disabled":true,"blinded_charge":false,"custom_columns":{},"is_custom_field":false,"editing_disabled":false},"freight_charges_custom_charge_20ftodc_(lxwxh_-_20'x8'x8'8\")_10_ton":{"price":"52850","units":1,"tax_id":"0","taxable":"1","currency":"INR","non_zero":false,"priority":11,"required":true,"at_actual":"0","is_hidden":false,"unit_name":"TRUCK TON 10 20'X8'X8'8\") - (LXWXH 20FTODC","slab_rates":null,"display_name":"Freight Charges 20FTODC (LxWXH - 20'x8'x8'8\") 10 Ton Truck","split_charge":false,"tax_disabled":true,"blinded_charge":false,"custom_columns":{},"is_custom_field":false,"editing_disabled":false},"display_name":"Freight Charges"}},"vendor_group":{"id":"25e81107-6af5-4ee4-b87c-2ca32f3f384b","name":"Best Roadway Limited Waaree Domestic","schema":"app","time_zone":"Mumbai","currency":"INR","unique_id":"VE410403","company_type":"vendor","company_id":"152bf2c2-aac4-486a-85a1-229242e41573","country":"India","is_approval_matrix":false,"filter_name":"Best Roadway Limited Waaree Domestic VE410403","company_name":"Best Roadway Limited","group_name":"Best Roadway Limited Waaree Domestic","company_code":"bestroadways","company_logo_public_path":"","city":"","created_date":"13/06/2025","client_configuration":{"modules_enabled":[],"global":{"quote_module_enabled":false,"tracking_module_enabled":false,"invoice_module_enabled":false,"contract_module_enabled":false,"dispatch_module_enabled":false,"shipment_module_enabled":false,"engagement_app_module_enabled":false,"order_management_module_enabled":false,"document_reading_module_enabled":false},"enquiry":{"enabled":false},"invoice":{"enabled":false},"dispatch":{"enabled":false},"container_tracking":{"enabled":false},"shipment_tracking":{"enabled":false},"engagement_app":{"enabled":false,"container_tracking":{"enabled":false,"subscription_enabled":false},"sailing_schedule":{"enabled":false,"subscription_limit":"250","subscription_date":"","subscription_enabled":false},"port_congestion":{"enabled":false,"subscription_limit":"250","subscription_date":"","subscription_enabled":false},"carrier_performance":{"enabled":false,"subscription_enabled":false},"gfi":{"enabled":false,"disable_gfi_quote":false,"rate_request_limit":"250","gfi_trial":false,"gfi_trial_start_time":"","subscription_limit":"250","subscription_date":"","subscription_enabled":{"enabled":false,"api_access":false}}},"workflow":{"enabled":false},"login":{"enabled":false},"order_management":{"enabled":false},"document_reading":{"enabled":false}},"notification":{"enabled":true,"platform_updates_enabled":true,"general_reports_enabled":true,"misc_enabled":true,"send_confirmation_email":true,"disabled_notifications":{"enabled":true,"dispatch_module":[]},"cc_emails":{"enabled":true,"emails":[]},"dispatch_notifications":{"enabled":true,"to_all_client_users":true,"to_all_vendor_users":true,"to_consignee_users":true,"to_cc_client_emails":[],"to_dispatch_creator_only":false},"invoice_notifications":{"enabled":false,"invoice_confirmation":{"enabled":false,"to_client_emails":[]}}},"deleted":false,"approval_matrix":[],"address":"","zipcode":"","user_ids":["2f9ac9a4-6c97-49a4-ae5c-e2537a645313","87ecaca1-79d6-4001-84c6-d433cc77e232","9721d974-3cef-448b-ae20-ebe6f19b84b9","0f1f98b3-aa50-497c-889d-0f6fdcfc578d","9ed4b084-8b11-40d6-b7cf-1835de94b80a"],"email":"sushant.malusare@bestroadways.com","phone":"9624893377","integration_code":"4000000166","vendor_code":"4000000166"},"l1_quote_total_cost_display":null,"carrier":null,"schedule":{"sun":false,"mon":false,"tue":false,"wed":false,"thu":false,"fri":false,"sat":false},"trans_ship_present":false,"reason_for_price_increase":null,"custom_columns":[],"price_increase_remarks":"","quote_rank":null,"currency":"INR","other_carrier_name":null,"negotiation_status":"not_negotiated","is_negotiating":false,"total_charges":{"11_freight_charges":{"sub_total":{"unit_name":"TRUCK","total":0,"total_per_unit":0,"tax":0,"total_in_sc":0,"total_per_unit_in_sc":0,"tax_in_sc":0,"total_with_tax":0,"total_per_unit_with_tax":0,"total_with_tax_in_sc":0,"total_per_unit_with_tax_in_sc":0,"units":6,"currency":"INR","quote_units":5,"total_per_unit_by_quote":0,"display_total_per_unit_by_quote":"0.0 INR","total_per_item":0,"display_total_per_item":"0.0 INR","display_total_per_unit":"0.0 INR","display_total":"0.0 INR","display_tax":"0.0 INR","display_total_with_tax":"0.0 INR (+ 0.0 INR tax)","display_sum_of_total_and_tax":"0.0 INR","display_total_per_unit_with_tax":"0.0 INR","display_total_per_unit_in_sc":"0.0 INR","display_total_in_sc":"0.0 INR","display_tax_in_sc":"0.0 INR","display_total_with_tax_in_sc":"0.0 INR (+ 0.0 INR tax)","display_sum_of_total_and_tax_in_sc":"0.0 INR","display_total_per_unit_with_tax_in_sc":"0.0 INR"},"display_name":"Freight Charges"},"total":{"total":0,"total_per_unit":0,"tax":0,"total_with_tax":0,"total_per_unit_with_tax":0,"units":6,"currency":"INR","quote_units":5,"total_per_unit_by_quote":0,"display_total_per_unit_by_quote":"0.0 INR","total_per_item":0,"display_total_per_item":"0.0 INR","display_total_per_unit":"0.0 INR","display_total":"0.0 INR","display_tax":"0.0 INR","display_total_with_tax":"0.0 INR (+ 0.0 INR tax)","display_sum_of_total_and_tax":"0.0 INR","display_total_per_unit_with_tax":"0.0 INR","unit_name":"TRUCK","display_name":"Total","original_total":0},"exchange_rates":[]},"indicative_charges_list":{"total_charge":{"price":null,"currency":"INR"},"negotiate_data":{"comment":null,"deadline":null},"11_freight_charges":{"price":null,"currency":"INR","charges":{}}},"bid_closing_in":4054}}
+
+
+
+RESPONSE:
+
+
+{
+    "id": "6cc664cb-72e1-4fda-9f67-5d66e7b48851",
+    "key": "5OZ5KQ",
+    "editing_enabled": false,
+    "remarks": "",
+    "trans_ship": null,
+    "valid_till": null,
+    "can_submit_quote": true,
+    "enquiry_vendor_id": "d46f4cc4-0cba-4b31-a6f8-5a016a8ded02",
+    "comments": null,
+    "status": "submitted",
+    "deleted": false,
+    "transport_transit_time": null,
+    "transit_time": null,
+    "detention_free_time_at_origin": null,
+    "detention_free_time_at_destination": null,
+    "detention_free_time_at_destination_unit": "hours",
+    "free_days_at_warehouse_at_destination": null,
+    "free_days_at_warehouse_at_origin": null,
+    "combined_free_time_at_destination": null,
+    "combined_free_time_at_origin": null,
+    "demurrage_free_time_at_origin": null,
+    "demurrage_free_time_at_destination": null,
+    "free_days_at_destination": null,
+    "allocated_quantity": null,
+    "updated_at": "2025-08-08T18:43:32.093+05:30",
+    "created_at": "2025-08-08T17:39:45.399+05:30",
+    "confirmed_by": null,
+    "approved_by": null,
+    "approval_matrix": [],
+    "can_decline_quote": true,
+    "decline_reason_type": null,
+    "invalid_quote_remarks": null,
+    "enquiry_id": "52692ba3-7db7-4df2-aac3-a6a3389cd8a1",
+    "charges_list": {
+        "11_freight_charges": {
+            "freight_charges_custom_charge_40ft_(lxwxh_-_40'x8'x8'8\")_22_ton": {
+                "price": 71500.0,
+                "units": 5,
+                "tax_id": "0",
+                "taxable": "1",
+                "currency": "INR",
+                "non_zero": false,
+                "priority": 11,
+                "required": true,
+                "at_actual": "0",
+                "is_hidden": false,
+                "unit_name": "TRUCK TON 22 40'X8'X8'8\") - (LXWXH 40FT",
+                "slab_rates": null,
+                "display_name": "Freight Charges 40FT (LxWXH - 40'x8'x8'8\") 22 Ton Truck",
+                "split_charge": false,
+                "tax_disabled": true,
+                "blinded_charge": false,
+                "custom_columns": {},
+                "is_custom_field": false,
+                "editing_disabled": false
+            },
+            "freight_charges_custom_charge_20ftodc_(lxwxh_-_20'x8'x8'8\")_10_ton": {
+                "price": 52850.0,
+                "units": 1,
+                "tax_id": "0",
+                "taxable": "1",
+                "currency": "INR",
+                "non_zero": false,
+                "priority": 11,
+                "required": true,
+                "at_actual": "0",
+                "is_hidden": false,
+                "unit_name": "TRUCK TON 10 20'X8'X8'8\") - (LXWXH 20FTODC",
+                "slab_rates": null,
+                "display_name": "Freight Charges 20FTODC (LxWXH - 20'x8'x8'8\") 10 Ton Truck",
+                "split_charge": false,
+                "tax_disabled": true,
+                "blinded_charge": false,
+                "custom_columns": {},
+                "is_custom_field": false,
+                "editing_disabled": false
+            },
+            "display_name": "Freight Charges"
+        }
+    },
+    "vendor_group": {
+        "id": "25e81107-6af5-4ee4-b87c-2ca32f3f384b",
+        "name": "Best Roadway Limited Waaree Domestic",
+        "schema": "app",
+        "time_zone": "Mumbai",
+        "currency": "INR",
+        "unique_id": "VE410403",
+        "company_type": "vendor",
+        "company_id": "152bf2c2-aac4-486a-85a1-229242e41573",
+        "country": "India",
+        "is_approval_matrix": false,
+        "filter_name": "Best Roadway Limited Waaree Domestic VE410403",
+        "company_name": "Best Roadway Limited",
+        "group_name": "Best Roadway Limited Waaree Domestic",
+        "company_code": "bestroadways",
+        "company_logo_public_path": "",
+        "city": "",
+        "user_ids": [
+            "2f9ac9a4-6c97-49a4-ae5c-e2537a645313",
+            "87ecaca1-79d6-4001-84c6-d433cc77e232",
+            "9721d974-3cef-448b-ae20-ebe6f19b84b9",
+            "0f1f98b3-aa50-497c-889d-0f6fdcfc578d",
+            "9ed4b084-8b11-40d6-b7cf-1835de94b80a"
+        ],
+        "created_date": "13/06/2025",
+        "client_configuration": {
+            "modules_enabled": [],
+            "global": {
+                "quote_module_enabled": false,
+                "tracking_module_enabled": false,
+                "invoice_module_enabled": false,
+                "contract_module_enabled": false,
+                "dispatch_module_enabled": false,
+                "shipment_module_enabled": false,
+                "engagement_app_module_enabled": false,
+                "order_management_module_enabled": false,
+                "document_reading_module_enabled": false
+            },
+            "enquiry": {
+                "enabled": false
+            },
+            "invoice": {
+                "enabled": false
+            },
+            "dispatch": {
+                "enabled": false
+            },
+            "container_tracking": {
+                "enabled": false
+            },
+            "shipment_tracking": {
+                "enabled": false
+            },
+            "engagement_app": {
+                "enabled": false,
+                "container_tracking": {
+                    "enabled": false,
+                    "subscription_enabled": false
+                },
+                "sailing_schedule": {
+                    "enabled": false,
+                    "subscription_limit": "250",
+                    "subscription_date": "",
+                    "subscription_enabled": false
+                },
+                "port_congestion": {
+                    "enabled": false,
+                    "subscription_limit": "250",
+                    "subscription_date": "",
+                    "subscription_enabled": false
+                },
+                "carrier_performance": {
+                    "enabled": false,
+                    "subscription_enabled": false
+                },
+                "gfi": {
+                    "enabled": false,
+                    "disable_gfi_quote": false,
+                    "rate_request_limit": "250",
+                    "gfi_trial": false,
+                    "gfi_trial_start_time": "",
+                    "subscription_limit": "250",
+                    "subscription_date": "",
+                    "subscription_enabled": {
+                        "enabled": false,
+                        "api_access": false
+                    }
+                }
+            },
+            "workflow": {
+                "enabled": false
+            },
+            "login": {
+                "enabled": false
+            },
+            "order_management": {
+                "enabled": false
+            },
+            "document_reading": {
+                "enabled": false
+            }
+        },
+        "notification": {
+            "enabled": true,
+            "platform_updates_enabled": true,
+            "general_reports_enabled": true,
+            "misc_enabled": true,
+            "send_confirmation_email": true,
+            "disabled_notifications": {
+                "enabled": true,
+                "dispatch_module": []
+            },
+            "cc_emails": {
+                "enabled": true,
+                "emails": []
+            },
+            "dispatch_notifications": {
+                "enabled": true,
+                "to_all_client_users": true,
+                "to_all_vendor_users": true,
+                "to_consignee_users": true,
+                "to_cc_client_emails": [],
+                "to_dispatch_creator_only": false
+            },
+            "invoice_notifications": {
+                "enabled": false,
+                "invoice_confirmation": {
+                    "enabled": false,
+                    "to_client_emails": []
+                }
+            }
+        },
+        "deleted": false,
+        "approval_matrix": [],
+        "address": "",
+        "zipcode": "",
+        "email": "sushant.malusare@bestroadways.com",
+        "phone": "9624893377",
+        "integration_code": "4000000166",
+        "vendor_code": "4000000166"
+    },
+    "l1_quote_total_cost_display": null,
+    "carrier": null,
+    "schedule": {
+        "sun": false,
+        "mon": false,
+        "tue": false,
+        "wed": false,
+        "thu": false,
+        "fri": false,
+        "sat": false
+    },
+    "trans_ship_present": false,
+    "reason_for_price_increase": null,
+    "custom_columns": [],
+    "price_increase_remarks": "",
+    "quote_rank": 1,
+    "currency": "INR",
+    "other_carrier_name": null,
+    "negotiation_status": "not_negotiated",
+    "is_negotiating": false,
+    "total_charges": {
+        "11_freight_charges": {
+            "sub_total": {
+                "unit_name": "TRUCK",
+                "total": 410350.0,
+                "total_per_unit": 68391.67,
+                "tax": 0.0,
+                "total_in_sc": 410350.0,
+                "total_per_unit_in_sc": 68391.67,
+                "tax_in_sc": 0.0,
+                "total_with_tax": 410350.0,
+                "total_per_unit_with_tax": 68391.67,
+                "total_with_tax_in_sc": 410350.0,
+                "total_per_unit_with_tax_in_sc": 68391.67,
+                "units": 6.0,
+                "currency": "INR",
+                "quote_units": 5.0,
+                "total_per_unit_by_quote": 82070.0,
+                "display_total_per_unit_by_quote": "82,070.0 INR",
+                "total_per_item": 0,
+                "display_total_per_item": "0.0 INR",
+                "display_total_per_unit": "68,391.67 INR",
+                "display_total": "4,10,350.0 INR",
+                "display_tax": "0.0 INR",
+                "display_total_with_tax": "4,10,350.0 INR (+ 0.0 INR tax)",
+                "display_sum_of_total_and_tax": "4,10,350.0 INR",
+                "display_total_per_unit_with_tax": "68,391.67 INR",
+                "display_total_per_unit_in_sc": "68,391.67 INR",
+                "display_total_in_sc": "4,10,350.0 INR",
+                "display_tax_in_sc": "0.0 INR",
+                "display_total_with_tax_in_sc": "4,10,350.0 INR (+ 0.0 INR tax)",
+                "display_sum_of_total_and_tax_in_sc": "4,10,350.0 INR",
+                "display_total_per_unit_with_tax_in_sc": "68,391.67 INR"
+            },
+            "display_name": "Freight Charges"
+        },
+        "total": {
+            "total": 410350.0,
+            "total_per_unit": 68391.67,
+            "tax": 0.0,
+            "total_with_tax": 410350.0,
+            "total_per_unit_with_tax": 68391.67,
+            "units": 6.0,
+            "currency": "INR",
+            "quote_units": 5.0,
+            "total_per_unit_by_quote": 82070.0,
+            "display_total_per_unit_by_quote": "82,070.0 INR",
+            "total_per_item": 0,
+            "display_total_per_item": "0.0 INR",
+            "display_total_per_unit": "68,391.67 INR",
+            "display_total": "4,10,350.0 INR",
+            "display_tax": "0.0 INR",
+            "display_total_with_tax": "4,10,350.0 INR (+ 0.0 INR tax)",
+            "display_sum_of_total_and_tax": "4,10,350.0 INR",
+            "display_total_per_unit_with_tax": "68,391.67 INR",
+            "unit_name": "TRUCK",
+            "display_name": "Total",
+            "original_total": 410350.0
+        },
+        "exchange_rates": []
+    },
+    "indicative_charges_list": {
+        "total_charge": {
+            "price": null,
+            "currency": "INR"
+        },
+        "negotiate_data": {
+            "comment": null,
+            "deadline": null
+        },
+        "11_freight_charges": {
+            "price": null,
+            "currency": "INR",
+            "charges": {}
+        }
+    },
+    "bid_closing_in": 3267
+}
