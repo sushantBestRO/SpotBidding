@@ -1,0 +1,24 @@
+[
+  {
+    "timestamp": "2025-09-19T10:33:14.022Z",
+    "enquiryKey": "250919ZKA1",
+    "bidType": "PUBLIC_SUBMISSION",
+    "bidPrice": 16000,
+    "timeToClosingMs": null,
+    "timeToClosingSec": 0,
+    "currentRank": null,
+    "success": true,
+    "responseTimeMs": 0,
+    "calculatedBids": {
+      "high": 17512,
+      "medium": 17256,
+      "low": 16821,
+      "marketValue": 16000
+    },
+    "percentages": {
+      "high": 9.45,
+      "medium": 7.85,
+      "low": 5.13
+    }
+  }
+]

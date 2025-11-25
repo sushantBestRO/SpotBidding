@@ -1,0 +1,54 @@
+[
+  {
+    "timestamp": "2025-08-16T06:55:06.330Z",
+    "enquiryKey": "250816PYZC",
+    "bidType": "PUBLIC_SUBMISSION",
+    "bidPrice": 25000,
+    "timeToClosingMs": null,
+    "timeToClosingSec": 0,
+    "currentRank": null,
+    "success": true,
+    "responseTimeMs": 0,
+    "calculatedBids": {
+      "high": 27192,
+      "medium": 26693,
+      "low": 26213,
+      "marketValue": 25000
+    },
+    "percentages": {
+      "high": 8.77,
+      "medium": 6.77,
+      "low": 4.85
+    }
+  },
+  {
+    "timestamp": "2025-08-16T07:24:50.645Z",
+    "enquiryKey": "250816PYZC",
+    "bidType": "MEDIUM",
+    "bidPrice": 26693,
+    "timeToClosingMs": 9984.5,
+    "timeToClosingSec": 9,
+    "currentRank": 1,
+    "success": true,
+    "responseTimeMs": 901,
+    "revisionsLeft": 2,
+    "bidsSubmitted": 1,
+    "startedBy": "public-submission",
+    "userFullName": "Public Submission"
+  },
+  {
+    "timestamp": "2025-08-16T07:24:51.560Z",
+    "enquiryKey": "250816PYZC",
+    "bidType": "HIGH",
+    "bidPrice": 27192,
+    "timeToClosingMs": 9069.5,
+    "timeToClosingSec": 9,
+    "currentRank": 1,
+    "success": true,
+    "responseTimeMs": 718,
+    "revisionsLeft": 1,
+    "bidsSubmitted": 2,
+    "startedBy": "public-submission",
+    "userFullName": "Public Submission"
+  }
+]
