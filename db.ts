@@ -1,21 +1,29 @@
-const { Pool } = require('pg');
-const bcrypt = require('bcrypt');
-require('dotenv').config();
+import { Pool, PoolClient } from 'pg';
+import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  console.error('ERROR: DATABASE_URL is not defined in .env file.');
+  console.error('Please create a .env file with DATABASE_URL=postgresql://user:password@localhost:5432/dbname');
+  process.exit(1);
+}
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  // If using individual env vars, pg will pick them up automatically:
-  // PGHOST, PGUSER, PGDATABASE, PGPASSWORD, PGPORT
+  connectionString,
 });
 
 // Test connection
-pool.on('error', (err, client) => {
+pool.on('error', (err: Error, client: PoolClient) => {
   console.error('Unexpected error on idle client', err);
   process.exit(-1);
 });
 
-async function initDb() {
-  const client = await pool.connect();
+async function initDb(): Promise<void> {
+  const client: PoolClient = await pool.connect();
   try {
     console.log('[DB] Initializing database schema...');
 
@@ -109,7 +117,7 @@ async function initDb() {
     `);
 
     // Migration: Add columns if they don't exist (for existing tables)
-    const columnsToAdd = [
+    const columnsToAdd: string[] = [
       'l1_quote_total_cost_display TEXT',
       'cargo_type JSONB',
       'quantity JSONB',
@@ -147,8 +155,11 @@ async function initDb() {
     for (const col of columnsToAdd) {
       const colName = col.split(' ')[0];
       try {
+        await client.query('SAVEPOINT add_col');
         await client.query(`ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS ${col}`);
-      } catch (e) {
+        await client.query('RELEASE SAVEPOINT add_col');
+      } catch (e: any) {
+        await client.query('ROLLBACK TO SAVEPOINT add_col');
         console.log(`[DB] Column ${colName} might already exist or error adding:`, e.message);
       }
     }
@@ -169,11 +180,14 @@ async function initDb() {
     `);
 
     try {
+      await client.query('SAVEPOINT ext_cols');
       await client.query(`ALTER TABLE enquiry_extensions ADD COLUMN IF NOT EXISTS last_bid_amount NUMERIC`);
       await client.query(`ALTER TABLE enquiry_extensions ADD COLUMN IF NOT EXISTS bid_1_amount NUMERIC`);
       await client.query(`ALTER TABLE enquiry_extensions ADD COLUMN IF NOT EXISTS bid_2_amount NUMERIC`);
       await client.query(`ALTER TABLE enquiry_extensions ADD COLUMN IF NOT EXISTS bid_3_amount NUMERIC`);
-    } catch (e) {
+      await client.query('RELEASE SAVEPOINT ext_cols');
+    } catch (e: any) {
+      await client.query('ROLLBACK TO SAVEPOINT ext_cols');
       console.log('[DB] Error adding columns to enquiry_extensions:', e.message);
     }
 
@@ -189,16 +203,22 @@ async function initDb() {
 
     // Check if session primary key exists
     try {
+      await client.query('SAVEPOINT session_pk');
       await client.query('ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;');
-    } catch (e) {
+      await client.query('RELEASE SAVEPOINT session_pk');
+    } catch (e: any) {
+      await client.query('ROLLBACK TO SAVEPOINT session_pk');
       if (e.code !== '42P16' && e.code !== '23505') {
         // console.log('Session PK might already exist:', e.message);
       }
     }
 
     try {
+      await client.query('SAVEPOINT session_idx');
       await client.query('CREATE INDEX "IDX_session_expire" ON "session" ("expire");');
-    } catch (e) {
+      await client.query('RELEASE SAVEPOINT session_idx');
+    } catch (e: any) {
+      await client.query('ROLLBACK TO SAVEPOINT session_idx');
       if (e.code !== '42P07') {
         // console.log('Session index might already exist:', e.message);
       }
@@ -229,7 +249,7 @@ async function initDb() {
 
     await client.query('COMMIT');
     console.log('[DB] Database initialization complete.');
-  } catch (e) {
+  } catch (e: any) {
     await client.query('ROLLBACK');
     console.error('[DB] Error initializing database:', e);
     throw e;
@@ -238,7 +258,4 @@ async function initDb() {
   }
 }
 
-module.exports = {
-  pool,
-  initDb
-};
+export { pool, initDb };
