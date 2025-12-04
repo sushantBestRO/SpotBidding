@@ -1,13 +1,32 @@
-export function formatDateTime(dateStr: string) {
+export function formatDateTime(dateStr: string | Date | null) {
+    if (!dateStr) return null;
     const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return null;
 
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    const hours = String(d.getHours()).padStart(2, '0');
-    const mins = String(d.getMinutes()).padStart(2, '0');
+    console.log('[formatDateTime] Input:', dateStr);
+    console.log('[formatDateTime] Date object UTC:', d.toISOString());
 
-    return `${day}/${month}/${year} ${hours}:${mins}`;
+    // Get IST time components using Intl.DateTimeFormat
+    const formatter = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Kolkata',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+
+    const parts = formatter.formatToParts(d);
+    const day = parts.find(p => p.type === 'day')?.value || '00';
+    const month = parts.find(p => p.type === 'month')?.value || '00';
+    const year = parts.find(p => p.type === 'year')?.value || '0000';
+    const hour = parts.find(p => p.type === 'hour')?.value || '00';
+    const minute = parts.find(p => p.type === 'minute')?.value || '00';
+
+    const result = `${day}/${month}/${year} ${hour}:${minute}`;
+    console.log('[formatDateTime] Output IST:', result);
+    return result;
 }
 
 // Helper to safely parse dates
@@ -44,21 +63,24 @@ export function formatDateWithAMPM(dateStr: string | Date | null): string | null
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return null;
 
-    const day = String(d.getDate()).padStart(2, '0');
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
-    const month = monthNames[d.getMonth()];
-    const year = d.getFullYear();
+    // Get IST time components using Intl.DateTimeFormat
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Kolkata',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
 
-    let hours = d.getHours();
-    const minutes = String(d.getMinutes()).padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const parts = formatter.formatToParts(d);
+    const day = parts.find(p => p.type === 'day')?.value || '00';
+    const month = parts.find(p => p.type === 'month')?.value || 'Jan';
+    const year = parts.find(p => p.type === 'year')?.value || '0000';
+    const hour = parts.find(p => p.type === 'hour')?.value || '00';
+    const minute = parts.find(p => p.type === 'minute')?.value || '00';
+    const dayPeriod = parts.find(p => p.type === 'dayPeriod')?.value || 'AM';
 
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-
-    const strHours = String(hours).padStart(2, '0');
-
-    return `${day} ${month} ${year} ${strHours}:${minutes} ${ampm}`;
+    return `${day} ${month} ${year} ${hour}:${minute} ${dayPeriod}`;
 }
