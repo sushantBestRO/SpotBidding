@@ -237,9 +237,14 @@ async function displayQuotes(quotesData) {
                     <h3>${quote.display_number}</h3>
                     <span class="gid">GID: ${quote.enquiry_number}</span>
                 </div>
+                
                 <div class="header-right">
                     <span class="rank">Rank: ${quote.rank}</span>
                     <span class="quote-status status-${quote.status.toLowerCase()}">${quote.status}</span>
+                    
+                    ${quote?.extensions?.length > 0 ? `
+                        <span class="bid-extension">Extensions #: ${quote.extensions.length}</span>
+                    ` : ''}
                 </div>
             </div>
             <div class="quote-details">
@@ -376,7 +381,7 @@ async function displayQuotes(quotesData) {
                                value="${quote.bid_amounts.marketValue || ''}"
                                placeholder="0"
                                onchange="calculateBidPricesSingle(this)"
-                               ${quote.bidding_active ? 'readonly' : ''}> ${quote.bid_amounts.marketValue ? '<span>Added by ' + quote.bid_amounts.marketValueUpdatedBy + ' at ' + quote.bid_amounts.marketValueUpdatedAt + '</span > ' : ''}
+                               ${quote.bidding_active ? 'readonly' : ''}> ${quote.bid_amounts.marketValue ? '<br><span style="font-size: 12px;">Added by <b>' + quote.bid_amounts.marketValueUpdatedBy + '</b> at <b>' + quote.bid_amounts.marketValueUpdatedAt + '</b></span > ' : ''}
                     </div >
         <div class="bid-row">
             <div class="bid-input-group">

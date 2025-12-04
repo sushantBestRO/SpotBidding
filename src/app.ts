@@ -30,7 +30,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, // config.nodeEnv === 'production', // Set to false to allow HTTP in production
+        secure: config.nodeEnv === 'production', // Set to false to allow HTTP in production
         maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
     }
 }));

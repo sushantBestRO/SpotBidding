@@ -67,6 +67,11 @@ const seedUsers = async () => {
             templateName: "hello_world",
             enableWhatsApp: false
         },
+        pricePercents: {
+            low: 5,
+            high: 9,
+            medium: 7
+        },
         locations: [
             {
                 id: "chikhli",

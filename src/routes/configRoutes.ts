@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { setAuthToken, getConfig } from '../controllers/configController';
 import * as settingsController from '../controllers/settingsController';
 import { requireAuth, requireAdmin } from '../middleware/auth';
+import logger from '../../logger';
+
 
 const router = Router();
 
@@ -90,4 +92,24 @@ router.put('/settings/pricing', requireAdmin, settingsController.updatePricingSe
  */
 router.get('/public/percentages', settingsController.getPricingSettings);
 
+// Logs
+router.get('/logs/bids', requireAuth, (req, res) => {
+    try {
+        const bids = logger.getTodaysBids();
+        res.json({ success: true, bids });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch bid logs' });
+    }
+});
+
+router.get('/logs/errors', requireAuth, (req, res) => {
+    try {
+        const errors = logger.getTodaysErrors();
+        res.json({ success: true, errors });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch error logs' });
+    }
+});
+
 export default router;
+

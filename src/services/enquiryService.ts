@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
 import { biddingEngine } from './biddingEngine';
 import { inArray } from 'drizzle-orm';
-import { formatDateTime, parseDate, parseISTDate, parseTimestamp } from '../utils/utils';
+import { formatDateTime, parseDate, parseISTDate, parseTimestamp, formatDateWithAMPM } from '../utils/utils';
 
 export const syncEnquiries = async () => {
     try {
@@ -453,24 +453,24 @@ export const processQuotes = async (enquiries: any[], userSession: any) => {
                 if (monitor && monitor.config && monitor.config.bids) {
                     return {
                         //...monitor.config.bids,
-                        high: enquiry.bid1Amount,
-                        medium: enquiry.bid2Amount,
-                        low: enquiry.bid3Amount,
+                        high: enquiry.bidHighAmount,
+                        medium: enquiry.bidMediumAmount,
+                        low: enquiry.bidLowAmount,
                         marketValue: dbMarketValue,
                         marketValueUpdatedBy: dbUpdatedBy,
-                        marketValueUpdatedAt: dbUpdatedAt
+                        marketValueUpdatedAt: formatDateWithAMPM(dbUpdatedAt)
                     };
                 }
                 const userBids = userSession.bids?.[enquiryNumber] || { low: '', medium: '', high: '' };
 
                 return {
                     //...userBids,
-                    high: enquiry.bid1Amount,
-                    medium: enquiry.bid2Amount,
-                    low: enquiry.bid3Amount,
+                    high: enquiry.bidHighAmount,
+                    medium: enquiry.bidMediumAmount,
+                    low: enquiry.bidLowAmount,
                     marketValue: userBids.marketValue || dbMarketValue,
                     marketValueUpdatedBy: dbUpdatedBy,
-                    marketValueUpdatedAt: dbUpdatedAt
+                    marketValueUpdatedAt: formatDateWithAMPM(dbUpdatedAt)
                 };
             })(),
             bidding_active: !!(monitor && monitor.status === 'active'),

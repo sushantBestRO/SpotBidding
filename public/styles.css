@@ -688,6 +688,16 @@ main {
     border: 1px solid #ffcc02;
 }
 
+.bid-extension {
+    background: linear-gradient(135deg, #ffeaea, #ffd6d6);
+    color: #c62828;
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-lg);
+    font-size: 0.8rem;
+    font-weight: var(--font-weight-bold);
+    border: 1px solid #ef9a9a;
+}
+
 .quote-status {
     padding: var(--space-xs) var(--space-md);
     border-radius: var(--radius-lg);

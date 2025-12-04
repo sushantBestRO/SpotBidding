@@ -37,7 +37,7 @@ class BiddingEngine {
         this.strategies.set(strategy.name, strategy);
     }
 
-    public async startBidding(enquiryKey: string, bidConfig: any, user: any, strategyName: string = 'GoComet') {
+    public async startBidding(enquiryKey: string, bidConfig: any, user: any, options: any = {}, strategyName: string = 'GoComet') {
         if (this.monitors.has(enquiryKey)) {
             throw new Error('Bidding already active for this enquiry');
         }
@@ -74,7 +74,8 @@ class BiddingEngine {
             lastKnownCloseTime: initialCloseTime,
             startedBy: user.username || 'unknown',
             userFullName: user.name || user.username || 'Unknown User',
-            timeRemaining: initialTimeRemaining
+            timeRemaining: initialTimeRemaining,
+            ...options
         };
 
         this.monitors.set(enquiryKey, monitor);
@@ -87,7 +88,8 @@ class BiddingEngine {
                 ...bidConfig,
                 strategy: strategyName,
                 userFullName: monitor.userFullName,
-                bidsSubmitted: 0
+                bidsSubmitted: 0,
+                ...options
             },
             status: 'active',
             active: true,
@@ -103,7 +105,8 @@ class BiddingEngine {
                     ...bidConfig,
                     strategy: strategyName,
                     userFullName: monitor.userFullName,
-                    bidsSubmitted: 0
+                    bidsSubmitted: 0,
+                    ...options
                 },
                 startTime: new Date(),
                 updatedBy: user.username

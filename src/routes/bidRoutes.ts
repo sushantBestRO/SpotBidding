@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { startBidding, stopBidding, getBiddingStatus, getAllBiddingStatuses, submitBid, saveMarketRate, saveBids } from '../controllers/bidController';
+import { startBidding, stopBidding, getBiddingStatus, getAllBiddingStatuses, submitBid, saveMarketRate, saveBids, publicSubmitMarketPrice } from '../controllers/bidController';
 import { requireAuth, requireManager } from '../middleware/auth';
 
 const router = Router();
@@ -15,5 +15,7 @@ router.get('/bidding-status/:enquiryKey', requireAuth, getBiddingStatus);
 router.post('/submit-bid', requireAuth, submitBid);
 router.post('/save-market-rate', requireManager, saveMarketRate);
 router.post('/save-bids', requireAuth, saveBids);
+router.post('/public/submit-market-price', publicSubmitMarketPrice); // No auth required
+
 
 export default router;

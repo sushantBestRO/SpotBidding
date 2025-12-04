@@ -34,8 +34,10 @@ export const stopBidding = async (req: Request, res: Response) => {
 };
 
 import { db } from '../config/db';
-import { bidMonitors, enquiries } from '../models/schema';
+import { bidMonitors, enquiries, systemConfig } from '../models/schema';
 import { eq } from 'drizzle-orm';
+import { goCometApi, getHeaders } from '../services/goCometService';
+import logger from '../../logger';
 
 export const getBiddingStatus = async (req: Request, res: Response) => {
     const { enquiryKey } = req.params;
@@ -185,4 +187,119 @@ export const saveBids = async (req: Request, res: Response) => {
     }
 
     res.json({ success: true });
+};
+
+// Public market price submission (NO AUTH) - starts smart bidding
+export const publicSubmitMarketPrice = async (req: Request, res: Response) => {
+    const { enquiryKey, marketValue, cargoValues, isMultiCargo } = req.body;
+
+    // Validate input based on cargo type
+    if (!enquiryKey) {
+        return res.status(400).json({ error: 'Invalid enquiry key' });
+    }
+
+    if (isMultiCargo) {
+        if (!cargoValues || !Array.isArray(cargoValues) || cargoValues.length === 0) {
+            return res.status(400).json({ error: 'Invalid cargo values for multi-cargo enquiry' });
+        }
+        for (const cargo of cargoValues) {
+            if (!cargo.marketValue || cargo.marketValue <= 0) {
+                return res.status(400).json({ error: 'Invalid market value for cargo type' });
+            }
+        }
+    } else {
+        if (!marketValue || marketValue <= 0) {
+            return res.status(400).json({ error: 'Invalid market value' });
+        }
+    }
+
+    try {
+        const configResult = await db.select().from(systemConfig).limit(1);
+        const cfg = configResult[0];
+        const authToken = cfg?.globalAuthToken;
+        const pricePercents = (cfg?.config as any)?.pricePercents || { high: 9, medium: 7, low: 5 };
+
+        if (!authToken) {
+            return res.status(503).json({ error: 'System not configured for bidding' });
+        }
+
+        let bids: any;
+
+        if (isMultiCargo) {
+            // Multiple cargo types - create bid structure for each cargo
+            bids = { cargo: [] };
+
+            console.log('[PUBLIC SUBMISSION] Received cargoValues:', JSON.stringify(cargoValues, null, 2));
+
+            for (const cargo of cargoValues) {
+                const bidItem = {
+                    cargoIndex: cargo.cargoIndex,
+                    high: Math.round(cargo.marketValue * (1 + pricePercents.high / 100)),
+                    medium: Math.round(cargo.marketValue * (1 + pricePercents.medium / 100)),
+                    low: Math.round(cargo.marketValue * (1 + pricePercents.low / 100)),
+                    marketValue: cargo.marketValue
+                };
+                console.log('[PUBLIC SUBMISSION] Adding cargo bid:', JSON.stringify(bidItem, null, 2));
+                bids.cargo.push(bidItem);
+            }
+        } else {
+            // Single cargo type - use original logic
+            bids = {
+                high: Math.round(marketValue * (1 + pricePercents.high / 100)),
+                medium: Math.round(marketValue * (1 + pricePercents.medium / 100)),
+                low: Math.round(marketValue * (1 + pricePercents.low / 100)),
+                marketValue: marketValue
+            };
+        }
+
+        // Check if bidding already active
+        const monitor = biddingEngine.getStatus(enquiryKey);
+        if (monitor && monitor.status === 'active') {
+            return res.status(409).json({ error: 'Smart bidding already active for this enquiry' });
+        }
+
+        // Get enquiry details for closing timestamp
+        let closingTimestamp = null;
+        try {
+            const biddingUrl = `/api/v1/vendor/enquiries/${enquiryKey}/bidding-data`;
+            const biddingRes = await goCometApi.get(biddingUrl, { headers: getHeaders(authToken) });
+            const biddingData = biddingRes.data;
+
+            if (biddingData.bid_closing_in && biddingData.bid_closing_in > 0) {
+                // Calculate closing timestamp from current time + remaining seconds
+                closingTimestamp = new Date(Date.now() + (biddingData.bid_closing_in * 1000)).toISOString();
+            } else {
+                return res.status(400).json({ error: 'Enquiry has expired or no valid closing time' });
+            }
+        } catch (error) {
+            return res.status(400).json({ error: 'Unable to fetch enquiry details' });
+        }
+
+        // Start smart bidding monitor
+        const user = { username: 'Public Submission', role: 'public' };
+
+        // We need to inject the public submission flag into the bidding engine start
+        // Since startBidding takes user object, we can pass special user
+        await biddingEngine.startBidding(enquiryKey, bids, user, {
+            isPublicSubmission: true,
+            marketValue: isMultiCargo ? cargoValues : marketValue,
+            isMultiCargo: isMultiCargo,
+            closingTimestamp: closingTimestamp
+        });
+
+        logger.logBid(enquiryKey, 'PUBLIC_SUBMISSION', marketValue, 0, 0, true, 0, {
+            calculatedBids: bids,
+            percentages: pricePercents
+        });
+
+        res.json({
+            success: true,
+            message: 'Smart bidding started with your market price',
+            bids: bids // Show calculated bids to admin only
+        });
+
+    } catch (error: any) {
+        console.error('Error starting public bidding:', error);
+        res.status(500).json({ error: 'Failed to start smart bidding' });
+    }
 };
