@@ -28,7 +28,7 @@ function formatTimeRemaining(seconds) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    
+
     if (hours > 0) {
         return `${hours}h ${minutes}m`;
     } else if (minutes > 0) {
@@ -52,13 +52,13 @@ async function toggleLogs() {
     const quotesContainer = document.getElementById('quotesContainer');
     const logsContainer = document.getElementById('logsContainer');
     const viewLogsBtn = document.getElementById('viewLogsBtn');
-    
+
     if (logsContainer.style.display === 'none') {
         // Show logs
         quotesContainer.style.display = 'none';
         logsContainer.style.display = 'block';
         viewLogsBtn.textContent = 'View Quotes';
-        
+
         // Fetch and display logs
         await loadLogs();
     } else {
@@ -75,11 +75,11 @@ async function loadLogs() {
         // Fetch bid logs
         const bidResponse = await fetch('/api/logs/bids');
         const bidData = await bidResponse.json();
-        
+
         // Fetch error logs
         const errorResponse = await fetch('/api/logs/errors');
         const errorData = await errorResponse.json();
-        
+
         // Display bid logs
         const bidLogsDiv = document.getElementById('bidLogs');
         if (bidData.bids && bidData.bids.length > 0) {
@@ -96,7 +96,7 @@ async function loadLogs() {
         } else {
             bidLogsDiv.innerHTML = '<p>No bid logs for today</p>';
         }
-        
+
         // Display error logs
         const errorLogsDiv = document.getElementById('errorLogs');
         if (errorData.errors && errorData.errors.length > 0) {
@@ -119,22 +119,22 @@ async function loadLogs() {
 // Initialize
 async function init() {
     console.log('[INIT] Starting initialization...');
-    
+
     try {
         const response = await fetch('/api/user');
         console.log('[INIT] User API response status:', response.status);
         const data = await response.json();
         console.log('[INIT] User data:', data);
-        
+
         if (data.user) {
             document.getElementById('username-display').textContent = data.user.name;
             console.log('[INIT] Logged in as:', data.user.name, '(' + data.user.username + ')');
-            
+
             // Show settings link for admins
             if (data.user.isAdmin) {
                 document.getElementById('settingsLink').style.display = 'inline-block';
             }
-            
+
             // Load saved email
             try {
                 const emailResponse = await fetch('/api/get-email');
@@ -145,19 +145,22 @@ async function init() {
             } catch (e) {
                 console.log('[INIT] Could not load email:', e);
             }
-            
+
             // Always show loading state initially
             const quotesContainer = document.getElementById('quotesContainer');
             if (quotesContainer) {
                 quotesContainer.innerHTML = '<div class="loading">Loading quotes...</div>';
             }
-            
+
+            // Initialize location and WhatsApp functionality
+            initializeLocationAndWhatsApp();
+
             // Force immediate quote loading
             console.log('[INIT] Forcing immediate quote load...');
             setTimeout(() => {
                 checkAuthAndLoadQuotes();
             }, 100);
-            
+
         } else {
             console.log('[INIT] No user found, redirecting to login...');
             window.location.href = '/';
@@ -178,22 +181,22 @@ async function checkAuthAndLoadQuotes() {
         console.log('[CHECK AUTH] Attempting to load quotes directly...');
         console.log('[CHECK AUTH] Dashboard element:', dashboardContent);
         console.log('[CHECK AUTH] Auth section element:', authSection);
-        
+
         // ALWAYS try to load quotes first - don't check for token existence
         const response = await fetch('/api/quotes');
-        
+
         console.log('[CHECK AUTH] Quotes response status:', response.status);
-        
+
         if (response.ok) {
             const data = await response.json();
             console.log('[CHECK AUTH] Quotes loaded successfully!');
             console.log('[CHECK AUTH] Number of quotes:', data.quotes?.length);
-            
+
             // Hide auth section and show dashboard
             authSection.style.display = 'none';
             dashboardContent.style.display = 'block';
             console.log('[CHECK AUTH] Dashboard visibility set to:', dashboardContent.style.display);
-            
+
             displayQuotes(data.quotes);
             startAutoRefresh();
             return;
@@ -202,12 +205,12 @@ async function checkAuthAndLoadQuotes() {
             const errorText = await response.text();
             console.log('[CHECK AUTH] Quotes failed with error:', errorText);
         }
-        
+
         // Only show auth section if quotes actually failed
         console.log('[CHECK AUTH] Quotes failed, showing auth section');
         authSection.style.display = 'block';
         dashboardContent.style.display = 'none';
-        
+
     } catch (error) {
         console.error('[CHECK AUTH] Error:', error);
         console.error('[CHECK AUTH] Error stack:', error.stack);
@@ -220,10 +223,14 @@ async function checkAuthAndLoadQuotes() {
 // Display quotes
 async function displayQuotes(quotesData) {
     quotes = quotesData;
-    totalQueriesSpan.textContent = quotes.length;
+
+    // Apply location filter
+    const filteredQuotes = quotes.filter(matchesLocationFilter);
+
+    totalQueriesSpan.textContent = filteredQuotes.length;
     lastUpdatedSpan.textContent = new Date().toLocaleTimeString();
-    
-    quotesContainer.innerHTML = quotes.map(quote => `
+
+    quotesContainer.innerHTML = filteredQuotes.map(quote => `
         <div class="quote-card" data-enquiry="${quote.enquiry_number}">
             <div class="quote-header">
                 <div>
@@ -252,9 +259,9 @@ async function displayQuotes(quotesData) {
                     <div class="detail-row">
                         <span class="detail-label">Bidding Units:</span>
                         <div class="unit-details">
-                            ${quote.unit_details.charges.map(charge => 
-                                `<div class="unit-item">• ${charge.units} × ${charge.unitName} (${charge.type})</div>`
-                            ).join('')}
+                            ${quote.unit_details.charges.map(charge =>
+        `<div class="unit-item">• ${charge.units} × ${charge.unitName} (${charge.type})</div>`
+    ).join('')}
                             <div class="unit-total">Total: ${quote.unit_details.totalUnits} units</div>
                         </div>
                     </div>
@@ -288,26 +295,26 @@ async function displayQuotes(quotesData) {
                     <h4>Enter Bid Amounts:</h4>
                     <div class="multi-cargo-grid">
                         ${quote.unit_details.charges.map((charge, index) => {
-                            // Debug logging to understand the data structure
-                            console.log(`[DEBUG] Processing cargo ${index}:`, charge);
-                            console.log(`[DEBUG] Quote bid amounts:`, quote.bid_amounts);
-                            
-                            // Find matching cargo data - try multiple strategies
-                            let matchedCargo = null;
-                            if (quote.bid_amounts.cargo) {
-                                console.log(`[DEBUG] Looking for cargoIndex ${index} in:`, quote.bid_amounts.cargo);
-                                // Strategy 1: Try exact cargoIndex match
-                                matchedCargo = quote.bid_amounts.cargo.find(c => Number(c.cargoIndex) === index);
-                                
-                                // Strategy 2: If no exact match, try array index match
-                                if (!matchedCargo && quote.bid_amounts.cargo[index]) {
-                                    console.log(`[DEBUG] No cargoIndex match found, using array index ${index}`);
-                                    matchedCargo = quote.bid_amounts.cargo[index];
-                                }
-                                
-                                console.log(`[DEBUG] Final matched cargo:`, matchedCargo);
-                            }
-                            return `
+        // Debug logging to understand the data structure
+        console.log(`[DEBUG] Processing cargo ${index}:`, charge);
+        console.log(`[DEBUG] Quote bid amounts:`, quote.bid_amounts);
+
+        // Find matching cargo data - try multiple strategies
+        let matchedCargo = null;
+        if (quote.bid_amounts.cargo) {
+            console.log(`[DEBUG] Looking for cargoIndex ${index} in:`, quote.bid_amounts.cargo);
+            // Strategy 1: Try exact cargoIndex match
+            matchedCargo = quote.bid_amounts.cargo.find(c => Number(c.cargoIndex) === index);
+
+            // Strategy 2: If no exact match, try array index match
+            if (!matchedCargo && quote.bid_amounts.cargo[index]) {
+                console.log(`[DEBUG] No cargoIndex match found, using array index ${index}`);
+                matchedCargo = quote.bid_amounts.cargo[index];
+            }
+
+            console.log(`[DEBUG] Final matched cargo:`, matchedCargo);
+        }
+        return `
                             <div class="cargo-card">
                                 <div class="cargo-header">${charge.type} (${charge.units}×${charge.unitName.split(' ')[0]})</div>
                                 <div class="cargo-inputs">
@@ -330,7 +337,7 @@ async function displayQuotes(quotesData) {
                                                    data-type="high" 
                                                    data-cargo-index="${index}"
                                                    data-enquiry="${quote.enquiry_number}"
-                                                   value="${localBidStorage.get(quote.enquiry_number)?.cargo?.[index]?.high || (matchedCargo?.high) || ''}"
+                                                   value="${localBidStorage.get(quote.enquiry_number)?.cargo?.[index]?.high || ''}"
                                                    placeholder="0">
                                         </div>
                                         <div class="input-group">
@@ -340,7 +347,7 @@ async function displayQuotes(quotesData) {
                                                    data-type="medium" 
                                                    data-cargo-index="${index}"
                                                    data-enquiry="${quote.enquiry_number}"
-                                                   value="${localBidStorage.get(quote.enquiry_number)?.cargo?.[index]?.medium || (matchedCargo?.medium) || ''}"
+                                                   value="${localBidStorage.get(quote.enquiry_number)?.cargo?.[index]?.medium || ''}"
                                                    placeholder="0">
                                         </div>
                                         <div class="input-group">
@@ -350,13 +357,14 @@ async function displayQuotes(quotesData) {
                                                    data-type="low" 
                                                    data-cargo-index="${index}"
                                                    data-enquiry="${quote.enquiry_number}"
-                                                   value="${localBidStorage.get(quote.enquiry_number)?.cargo?.[index]?.low || (matchedCargo?.low) || ''}"
+                                                   value="${localBidStorage.get(quote.enquiry_number)?.cargo?.[index]?.low || ''}"
                                                    placeholder="0">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        `; }).join('')}
+                        `;
+    }).join('')}
                     </div>
                 ` : `
                     <h4>Enter Bid Amounts:</h4>
@@ -368,61 +376,61 @@ async function displayQuotes(quotesData) {
                                value="${quote.bid_amounts.marketValue || ''}"
                                placeholder="0"
                                onchange="calculateBidPricesSingle(this)"
-                               ${quote.bidding_active ? 'readonly' : ''}>
-                    </div>
-                    <div class="bid-row">
-                        <div class="bid-input-group">
-                            <label>High</label>
-                            <div class="input-wrapper">
-                                <span class="currency">₹</span>
-                                <input type="number" 
-                                       class="bid-input" 
-                                       data-type="high" 
-                                       data-enquiry="${quote.enquiry_number}"
-                                       value="${localBidStorage.get(quote.enquiry_number)?.high || quote.bid_amounts.high || ''}"
-                                       placeholder="0.00">
-                            </div>
-                        </div>
-                        <div class="bid-input-group">
-                            <label>Medium</label>
-                            <div class="input-wrapper">
-                                <span class="currency">₹</span>
-                                <input type="number" 
-                                       class="bid-input" 
-                                       data-type="medium" 
-                                       data-enquiry="${quote.enquiry_number}"
-                                       value="${localBidStorage.get(quote.enquiry_number)?.medium || quote.bid_amounts.medium || ''}"
-                                       placeholder="0.00">
-                            </div>
-                        </div>
-                        <div class="bid-input-group">
-                            <label>Low</label>
-                            <div class="input-wrapper">
-                                <span class="currency">₹</span>
-                                <input type="number" 
-                                       class="bid-input" 
-                                       data-type="low" 
-                                       data-enquiry="${quote.enquiry_number}"
-                                       value="${localBidStorage.get(quote.enquiry_number)?.low || quote.bid_amounts.low || ''}"
-                                       placeholder="0.00">
-                            </div>
-                        </div>
-                    </div>
+                               ${quote.bidding_active ? 'readonly' : ''}> ${quote.bid_amounts.marketValue ? '<span>Added by ' + quote.bid_amounts.marketValueUpdatedBy + ' at ' + quote.bid_amounts.marketValueUpdatedAt + '</span > ' : ''}
+                    </div >
+        <div class="bid-row">
+            <div class="bid-input-group">
+                <label>High</label>
+                <div class="input-wrapper">
+                    <span class="currency">₹</span>
+                    <input type="number"
+                        class="bid-input"
+                        data-type="high"
+                        data-enquiry="${quote.enquiry_number}"
+                        value="${quote && quote.bid_amounts && quote.bid_amounts.high || ''}"
+                        placeholder="0.00">
+                </div>
+            </div>
+            <div class="bid-input-group">
+                <label>Medium</label>
+                <div class="input-wrapper">
+                    <span class="currency">₹</span>
+                    <input type="number"
+                        class="bid-input"
+                        data-type="medium"
+                        data-enquiry="${quote.enquiry_number}"
+                        value="${quote && quote.bid_amounts && quote.bid_amounts.medium || ''}"
+                        placeholder="0.00">
+                </div>
+            </div>
+            <div class="bid-input-group">
+                <label>Low</label>
+                <div class="input-wrapper">
+                    <span class="currency">₹</span>
+                    <input type="number"
+                        class="bid-input"
+                        data-type="low"
+                        data-enquiry="${quote.enquiry_number}"
+                        value="${quote && quote.bid_amounts && quote.bid_amounts.low || ''}"
+                        placeholder="0.00">
+                </div>
+            </div>
+        </div>
                 `}
                 <div class="bid-controls">
                     <button class="btn btn-primary btn-small" 
                             onclick="startSmartBidding('${quote.enquiry_number}', '${quote.closing_timestamp}')"
                             id="start-btn-${quote.enquiry_number}"
                             ${(() => {
-                                // Check if all required bid amounts are present
-                                if (quote.bid_amounts.cargo && Array.isArray(quote.bid_amounts.cargo)) {
-                                    // Multi-cargo: check if all cargo types have all bid values
-                                    return quote.bid_amounts.cargo.some(cargo => !cargo.high || !cargo.medium || !cargo.low) ? 'disabled' : '';
-                                } else {
-                                    // Single cargo: check traditional bid amounts
-                                    return (!quote.bid_amounts.low || !quote.bid_amounts.medium || !quote.bid_amounts.high) ? 'disabled' : '';
-                                }
-                            })()}>
+            // Check if all required bid amounts are present
+            if (quote.bid_amounts.cargo && Array.isArray(quote.bid_amounts.cargo)) {
+                // Multi-cargo: check if all cargo types have all bid values
+                return quote.bid_amounts.cargo.some(cargo => !cargo.high || !cargo.medium || !cargo.low) ? 'disabled' : '';
+            } else {
+                // Single cargo: check traditional bid amounts
+                return (!quote.bid_amounts.low || !quote.bid_amounts.medium || !quote.bid_amounts.high) ? 'disabled' : '';
+            }
+        })()}>
                         Start Smart Bidding
                     </button>
                     <button class="btn btn-secondary btn-small" 
@@ -438,19 +446,19 @@ async function displayQuotes(quotesData) {
             </div>
         </div>
     `).join('');
-    
+
     // Attach event listeners to bid inputs (including cargo inputs)
     document.querySelectorAll('.bid-input, .cargo-input').forEach(input => {
         // Use 'input' event for real-time updates and 'blur' for final save
         input.addEventListener('input', debounce(handleBidChange, 500));
         input.addEventListener('blur', handleBidChange);
-        
+
         // Prevent value from being cleared on focus
         input.addEventListener('focus', (e) => {
             e.target.dataset.previousValue = e.target.value;
         });
     });
-    
+
     // Check existing bids and restore bidding monitors
     console.log('[DASHBOARD] Checking bidding status for all quotes...');
     for (const quote of quotes) {
@@ -459,9 +467,9 @@ async function displayQuotes(quotesData) {
             console.log(`[DASHBOARD] Checking status for ${quote.enquiry_number}`);
             const response = await fetch(`/api/bidding-status/${quote.enquiry_number}`);
             const data = await response.json();
-            
+
             console.log(`[DASHBOARD] Status for ${quote.enquiry_number}:`, data);
-            
+
             if (data.active) {
                 console.log(`[DASHBOARD] Restoring active bidding for ${quote.enquiry_number}`);
                 // Restore UI state for active bidding
@@ -479,18 +487,18 @@ async function handleBidChange(e) {
     const enquiryNumber = e.target.dataset.enquiry;
     const bidType = e.target.dataset.type;
     const value = e.target.value;
-    
+
     // Store value locally immediately
     if (!localBidStorage.has(enquiryNumber)) {
         localBidStorage.set(enquiryNumber, {});
     }
     localBidStorage.get(enquiryNumber)[bidType] = value;
-    
+
     // Get all bid values for this enquiry
     const lowInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="low"]`);
     const mediumInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="medium"]`);
     const highInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="high"]`);
-    
+
     // Use stored values if inputs are empty (prevents data loss)
     const storedValues = localBidStorage.get(enquiryNumber) || {};
     const bids = {
@@ -498,7 +506,7 @@ async function handleBidChange(e) {
         medium: mediumInput.value || storedValues.medium || '',
         high: highInput.value || storedValues.high || ''
     };
-    
+
     try {
         const response = await fetch('/api/save-bids', {
             method: 'POST',
@@ -507,12 +515,12 @@ async function handleBidChange(e) {
             },
             body: JSON.stringify({ enquiryNumber, bids })
         });
-        
+
         if (response.ok) {
             const statusDiv = document.getElementById(`status-${enquiryNumber}`);
             statusDiv.textContent = 'Bids saved!';
             statusDiv.className = 'bid-status success';
-            
+
             // Check if all bids are filled
             if (bids.low && bids.medium && bids.high) {
                 statusDiv.textContent = 'All bids filled! Ready for smart bidding.';
@@ -521,7 +529,7 @@ async function handleBidChange(e) {
                 document.getElementById(`start-btn-${enquiryNumber}`).disabled = true;
                 stopSmartBidding(enquiryNumber);
             }
-            
+
             setTimeout(() => {
                 statusDiv.textContent = '';
             }, 3000);
@@ -535,24 +543,24 @@ async function handleBidChange(e) {
 async function startSmartBidding(enquiryNumber, closingTimestamp) {
     const quote = quotes.find(q => q.enquiry_number === enquiryNumber);
     if (!quote) return;
-    
+
     let bids;
-    
+
     // Check if this is a multi-cargo enquiry
     if (quote.unit_details && quote.unit_details.charges && quote.unit_details.charges.length > 1) {
         // Multiple cargo types - collect bids for each cargo type
         bids = { cargo: [] };
-        
+
         for (let index = 0; index < quote.unit_details.charges.length; index++) {
             const lowInput = document.querySelector(`input.cargo-input[data-enquiry="${enquiryNumber}"][data-cargo-index="${index}"][data-type="low"]`);
             const mediumInput = document.querySelector(`input.cargo-input[data-enquiry="${enquiryNumber}"][data-cargo-index="${index}"][data-type="medium"]`);
             const highInput = document.querySelector(`input.cargo-input[data-enquiry="${enquiryNumber}"][data-cargo-index="${index}"][data-type="high"]`);
-            
+
             if (!lowInput?.value || !mediumInput?.value || !highInput?.value) {
                 alert(`Please fill all bid values for ${quote.unit_details.charges[index].type}`);
                 return;
             }
-            
+
             bids.cargo.push({
                 low: lowInput.value,
                 medium: mediumInput.value,
@@ -568,13 +576,13 @@ async function startSmartBidding(enquiryNumber, closingTimestamp) {
             medium: document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="medium"]`).value,
             high: document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="high"]`).value
         };
-        
+
         if (!bids.low || !bids.medium || !bids.high) {
             alert('Please fill all three bid values before starting smart bidding.');
             return;
         }
     }
-    
+
     try {
         const response = await fetch('/api/start-bidding', {
             method: 'POST',
@@ -588,20 +596,20 @@ async function startSmartBidding(enquiryNumber, closingTimestamp) {
                 bids
             })
         });
-        
+
         if (response.ok) {
             const responseData = await response.json();
             console.log('[START BIDDING] Response:', responseData);
-            
+
             // Update UI to show active state
-            updateBiddingUI(enquiryNumber, { 
+            updateBiddingUI(enquiryNumber, {
                 startedBy: 'You',
                 userFullName: 'You'
             }, true);
-            
+
             // Start monitoring
             startBiddingMonitor(enquiryNumber);
-            
+
             // Force immediate global status update
             if (globalStatusPollInterval) {
                 clearInterval(globalStatusPollInterval);
@@ -627,17 +635,17 @@ async function stopSmartBidding(enquiryNumber) {
             },
             body: JSON.stringify({ enquiryKey: enquiryNumber })
         });
-        
+
         // Update UI to show inactive state
         updateBiddingUI(enquiryNumber, {}, false);
         document.getElementById(`monitor-${enquiryNumber}`).innerHTML = '';
-        
+
         // Stop monitoring
         if (activeBidMonitors.has(enquiryNumber)) {
             clearInterval(activeBidMonitors.get(enquiryNumber));
             activeBidMonitors.delete(enquiryNumber);
         }
-        
+
         // Force immediate global status update
         if (globalStatusPollInterval) {
             clearInterval(globalStatusPollInterval);
@@ -654,17 +662,17 @@ function startBiddingMonitor(enquiryNumber) {
     if (activeBidMonitors.has(enquiryNumber)) {
         clearInterval(activeBidMonitors.get(enquiryNumber));
     }
-    
+
     const updateStatus = async () => {
         try {
             const response = await fetch(`/api/bidding-status/${enquiryNumber}`);
             const data = await response.json();
-            
+
             if (data.active) {
                 const monitorDiv = document.getElementById(`monitor-${enquiryNumber}`);
-                const statusClass = data.status === 'active_bidding' ? 'active' : 
-                                  data.status === 'closed' ? 'closed' : 'monitoring';
-                
+                const statusClass = data.status === 'active_bidding' ? 'active' :
+                    data.status === 'closed' ? 'closed' : 'monitoring';
+
                 monitorDiv.innerHTML = `
                     <div class="monitor-status ${statusClass}">
                         <div>Status: <strong>${data.status}</strong></div>
@@ -673,7 +681,7 @@ function startBiddingMonitor(enquiryNumber) {
                         ${data.timeRemaining ? `<div>Time Remaining: <strong>${formatTimeRemaining(data.timeRemaining)}</strong></div>` : ''}
                     </div>
                 `;
-                
+
                 // If bidding is closed, stop monitoring
                 if (data.status === 'closed' || data.status === 'timeout') {
                     setTimeout(() => stopSmartBidding(enquiryNumber), 5000);
@@ -686,7 +694,7 @@ function startBiddingMonitor(enquiryNumber) {
             console.error('Error updating bidding status:', error);
         }
     };
-    
+
     // Update immediately and then every second
     updateStatus();
     const interval = setInterval(updateStatus, 1000);
@@ -716,19 +724,19 @@ let currentOtpSessionId = null;
 
 document.getElementById('authenticateBtn').addEventListener('click', async () => {
     const email = emailInput.value.trim();
-    
+
     if (!email) {
         alert('Please enter your GoComet email');
         return;
     }
-    
+
     // Check if we already have a token
     const tokenCheckResponse = await fetch('/api/check-global-token');
     const tokenData = await tokenCheckResponse.json();
-    
+
     if (tokenData.hasGlobalToken) {
         console.log('[AUTH] Token already exists, checking if it works...');
-        
+
         // Try to load quotes directly
         const quotesResponse = await fetch('/api/quotes');
         if (quotesResponse.ok) {
@@ -736,10 +744,10 @@ document.getElementById('authenticateBtn').addEventListener('click', async () =>
             checkAuthAndLoadQuotes();
             return;
         }
-        
+
         console.log('[AUTH] Existing token failed, proceeding with re-authentication...');
     }
-    
+
     // Save email first
     await fetch('/api/set-email', {
         method: 'POST',
@@ -748,12 +756,12 @@ document.getElementById('authenticateBtn').addEventListener('click', async () =>
         },
         body: JSON.stringify({ email })
     });
-    
+
     try {
         const btn = document.getElementById('authenticateBtn');
         btn.disabled = true;
         btn.textContent = 'Sending OTP...';
-        
+
         const response = await fetch('/api/authenticate-chrome', {
             method: 'POST',
             headers: {
@@ -761,19 +769,19 @@ document.getElementById('authenticateBtn').addEventListener('click', async () =>
             },
             body: JSON.stringify({ email })
         });
-        
+
         if (response.ok) {
             const data = await response.json();
             currentOtpSessionId = data.otpSessionId;
-            
+
             // Hide email section and show OTP section
             document.getElementById('emailSection').style.display = 'none';
             document.getElementById('otpSection').style.display = 'flex';
             document.getElementById('authNote').textContent = 'Chrome is running in the background. Please check your email for the OTP.';
-            
+
             // Focus on OTP input
             document.getElementById('otpInput').focus();
-            
+
         } else {
             alert('Failed to send OTP. Please try again.');
             btn.disabled = false;
@@ -791,22 +799,22 @@ document.getElementById('authenticateBtn').addEventListener('click', async () =>
 // Submit OTP button
 document.getElementById('submitOtpBtn').addEventListener('click', async () => {
     const otp = document.getElementById('otpInput').value.trim();
-    
+
     if (!otp) {
         alert('Please enter the OTP');
         return;
     }
-    
+
     if (!currentOtpSessionId) {
         alert('Session expired. Please try again.');
         resetAuthForm();
         return;
     }
-    
+
     const btn = document.getElementById('submitOtpBtn');
     btn.disabled = true;
     btn.textContent = 'Verifying OTP...';
-    
+
     try {
         const otpResponse = await fetch('/api/submit-otp', {
             method: 'POST',
@@ -815,7 +823,7 @@ document.getElementById('submitOtpBtn').addEventListener('click', async () => {
             },
             body: JSON.stringify({ otpSessionId: currentOtpSessionId, otp })
         });
-        
+
         if (otpResponse.ok) {
             btn.textContent = 'Authentication successful!';
             document.getElementById('authNote').textContent = 'Authentication successful! Loading quotes...';
@@ -864,18 +872,18 @@ document.getElementById('otpInput').addEventListener('keypress', (e) => {
 document.querySelectorAll('.auth-tab').forEach(tab => {
     tab.addEventListener('click', () => {
         const tabName = tab.dataset.tab;
-        
+
         console.log('[TAB] Switching to:', tabName);
-        
+
         // Update active tab
         document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-        
+
         // Update active content
         document.querySelectorAll('.auth-content').forEach(content => {
             content.classList.remove('active');
         });
-        
+
         const targetContent = document.getElementById(tabName + 'Auth');
         if (targetContent) {
             targetContent.classList.add('active');
@@ -888,19 +896,19 @@ document.querySelectorAll('.auth-tab').forEach(tab => {
 // Direct token save
 document.getElementById('saveTokenBtn').addEventListener('click', async () => {
     const token = tokenInput.value.trim();
-    
+
     if (!token) {
         alert('Please enter a valid authorization token');
         return;
     }
-    
+
     try {
         const btn = document.getElementById('saveTokenBtn');
         btn.disabled = true;
         btn.textContent = 'Saving...';
-        
+
         console.log('[TOKEN SAVE] Saving token...');
-        
+
         const response = await fetch('/api/set-auth-token', {
             method: 'POST',
             headers: {
@@ -908,11 +916,11 @@ document.getElementById('saveTokenBtn').addEventListener('click', async () => {
             },
             body: JSON.stringify({ authToken: token })
         });
-        
+
         if (response.ok) {
             console.log('[TOKEN SAVE] Token saved successfully');
             btn.textContent = 'Token saved! Loading...';
-            
+
             // Small delay to ensure token is saved
             setTimeout(() => {
                 checkAuthAndLoadQuotes();
@@ -938,20 +946,20 @@ function updateBiddingUI(enquiryNumber, status, isActive) {
     const stopBtn = document.getElementById(`stop-btn-${enquiryNumber}`);
     const inputs = document.querySelectorAll(`input[data-enquiry="${enquiryNumber}"]`);
     const statusDiv = document.getElementById(`status-${enquiryNumber}`);
-    
+
     if (!startBtn || !stopBtn) return; // Elements might not exist yet
-    
+
     if (isActive) {
         startBtn.style.display = 'none';
         stopBtn.style.display = 'inline-block';
         inputs.forEach(input => {
             input.disabled = true;
         });
-        
+
         // Check if current user is admin
         const currentUser = document.getElementById('username-display').textContent;
         const isAdmin = document.getElementById('settingsLink').style.display !== 'none';
-        
+
         // Disable stop button for public submissions if user is not admin
         if (status.isPublicSubmission && !isAdmin) {
             stopBtn.disabled = true;
@@ -960,7 +968,7 @@ function updateBiddingUI(enquiryNumber, status, isActive) {
             stopBtn.disabled = false;
             stopBtn.title = '';
         }
-        
+
         // Show who started the bidding
         if (status.userFullName || status.startedBy) {
             const displayName = status.userFullName || status.startedBy;
@@ -974,13 +982,13 @@ function updateBiddingUI(enquiryNumber, status, isActive) {
             statusDiv.textContent = 'Smart bidding activated!';
             statusDiv.className = 'bid-status success';
         }
-        
+
         // Update bid values if available
         if (status.bids) {
             const highInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="high"]`);
             const mediumInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="medium"]`);
             const lowInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="low"]`);
-            
+
             if (highInput) highInput.value = Math.round(status.bids.high) || '';
             if (mediumInput) mediumInput.value = Math.round(status.bids.medium) || '';
             if (lowInput) lowInput.value = Math.round(status.bids.low) || '';
@@ -995,7 +1003,7 @@ function updateBiddingUI(enquiryNumber, status, isActive) {
         });
         statusDiv.textContent = 'Smart bidding stopped.';
         statusDiv.className = 'bid-status';
-        
+
         setTimeout(() => {
             statusDiv.textContent = '';
         }, 3000);
@@ -1007,26 +1015,26 @@ function startGlobalStatusPolling() {
     if (globalStatusPollInterval) {
         clearInterval(globalStatusPollInterval);
     }
-    
+
     // Poll every 10 seconds for status updates (reduced from 2 seconds)
     globalStatusPollInterval = setInterval(async () => {
         try {
             const response = await fetch('/api/bidding-status/all');
             const data = await response.json();
-            
+
             console.log('[GLOBAL POLL] Received statuses:', data.statuses);
-            
+
             if (data.statuses) {
                 // Check each quote for status updates
                 for (const [enquiryKey, status] of Object.entries(data.statuses)) {
                     const isLocallyActive = activeBidMonitors.has(enquiryKey);
                     const stopBtn = document.getElementById(`stop-btn-${enquiryKey}`);
-                    
+
                     // If bidding is active but we don't have a local monitor
                     if (status.active && !isLocallyActive && stopBtn) {
                         console.log(`[GLOBAL POLL] Activating UI for ${enquiryKey} (started by ${status.userFullName || status.startedBy})`);
                         updateBiddingUI(enquiryKey, status, true);
-                        
+
                         // Show monitor info without starting local monitor
                         const monitorDiv = document.getElementById(`monitor-${enquiryKey}`);
                         if (monitorDiv) {
@@ -1044,10 +1052,10 @@ function startGlobalStatusPolling() {
                             if (status.isPublicSubmission) {
                                 extraInfo += `<div style="margin-top: 4px; color: #ff9800; font-size: 12px;">⚠️ Public Submission</div>`;
                             }
-                            
+
                             // Clean bid display - no yellow status box, no colors
                             let bidDisplay = '';
-                            
+
                             if (status.bids) {
                                 if (status.bids.cargo && Array.isArray(status.bids.cargo)) {
                                     // Multi-cargo display
@@ -1056,7 +1064,7 @@ function startGlobalStatusPolling() {
                                             <div style="font-weight: 600; margin-bottom: 12px; color: #495057;">📊 Calculated Bid Prices:</div>
                                             <div style="display: grid; gap: 12px;">
                                     `;
-                                    
+
                                     status.bids.cargo.forEach((cargo, index) => {
                                         bidDisplay += `
                                             <div style="padding: 12px; background: #f8f9fa; border-radius: 6px; border: 1px solid #e9ecef;">
@@ -1078,7 +1086,7 @@ function startGlobalStatusPolling() {
                                             </div>
                                         `;
                                     });
-                                    
+
                                     bidDisplay += `
                                             </div>
                                         </div>
@@ -1106,7 +1114,7 @@ function startGlobalStatusPolling() {
                                     `;
                                 }
                             }
-                            
+
                             // Only show the clean bid display - no yellow status box
                             monitorDiv.innerHTML = bidDisplay;
                         }
@@ -1136,7 +1144,7 @@ window.addEventListener('beforeunload', () => {
 });
 
 // Debug function to check system state
-window.debugBiddingStatus = async function() {
+window.debugBiddingStatus = async function () {
     try {
         const response = await fetch('/api/debug/status');
         const data = await response.json();
@@ -1153,10 +1161,134 @@ window.debugBiddingStatus = async function() {
 };
 
 // Open public enquiry page (admin convenience)
-window.openPublicEnquiry = function(enquiryNumber) {
+window.openPublicEnquiry = function (enquiryNumber) {
     const url = `/enquiry/${encodeURIComponent(enquiryNumber)}`;
     window.open(url, '_blank', 'noopener');
 };
+
+// Location management
+let locations = [];
+let selectedLocationFilter = '';
+let whatsappEnabled = false;
+
+// Load locations from server
+async function loadLocations() {
+    try {
+        const response = await fetch('/api/locations');
+        if (response.ok) {
+            const data = await response.json();
+            locations = data.locations || [];
+            populateLocationFilter();
+        }
+    } catch (error) {
+        console.error('Error loading locations:', error);
+    }
+}
+
+// Populate location filter dropdown
+function populateLocationFilter() {
+    const locationSelect = document.getElementById('locationFilter');
+    if (!locationSelect) return;
+
+    // Clear existing options except "All Locations"
+    locationSelect.innerHTML = '<option value="">All Locations</option>';
+
+    // Add location options
+    locations.forEach(location => {
+        const option = document.createElement('option');
+        option.value = location.id;
+        option.textContent = location.plantName;
+        locationSelect.appendChild(option);
+    });
+}
+
+// Apply location filter
+function applyLocationFilter() {
+    selectedLocationFilter = document.getElementById('locationFilter').value;
+    console.log('[LOCATION FILTER] Applied filter:', selectedLocationFilter);
+
+    // Re-render quotes with filter
+    displayQuotes(quotes);
+}
+
+// Check if quote matches location filter
+function matchesLocationFilter(quote) {
+    if (!selectedLocationFilter) return true;
+
+    const location = locations.find(loc => loc.id === selectedLocationFilter);
+    if (!location) return true;
+
+    // Check if the quote's origin/loading location matches the selected location
+    const origin = quote.origin?.toLowerCase() || '';
+    const plantName = location.plantName?.toLowerCase() || '';
+    const sourceLocation = location.sourceLocation?.toLowerCase() || '';
+
+    return origin.includes(plantName.toLowerCase()) ||
+        origin.includes(sourceLocation.toLowerCase()) ||
+        plantName.includes(origin);
+}
+
+// WhatsApp management
+function toggleWhatsApp() {
+    const checkbox = document.getElementById('enableWhatsAppForNewBids');
+    const statusEl = document.getElementById('whatsappStatus');
+
+    whatsappEnabled = checkbox.checked;
+
+    if (whatsappEnabled) {
+        statusEl.textContent = 'Enabled';
+        statusEl.className = 'whatsapp-status enabled';
+    } else {
+        statusEl.textContent = 'Disabled';
+        statusEl.className = 'whatsapp-status disabled';
+    }
+
+    console.log('[WHATSAPP] Status changed to:', whatsappEnabled ? 'Enabled' : 'Disabled');
+}
+
+// Load WhatsApp configuration
+async function loadWhatsAppConfig() {
+    try {
+        const response = await fetch('/api/whatsapp-config');
+        if (response.ok) {
+            const data = await response.json();
+            const checkbox = document.getElementById('enableWhatsAppForNewBids');
+            const statusEl = document.getElementById('whatsappStatus');
+
+            whatsappEnabled = data.enableWhatsApp || false;
+            checkbox.checked = whatsappEnabled;
+
+            if (whatsappEnabled) {
+                statusEl.textContent = 'Enabled';
+                statusEl.className = 'whatsapp-status enabled';
+            } else {
+                statusEl.textContent = 'Disabled';
+                statusEl.className = 'whatsapp-status disabled';
+            }
+        }
+    } catch (error) {
+        console.error('Error loading WhatsApp config:', error);
+    }
+}
+
+// Initialize location and WhatsApp functionality
+function initializeLocationAndWhatsApp() {
+    // Set up event listeners
+    const applyFilterBtn = document.getElementById('applyLocationFilter');
+    const whatsappCheckbox = document.getElementById('enableWhatsAppForNewBids');
+
+    if (applyFilterBtn) {
+        applyFilterBtn.addEventListener('click', applyLocationFilter);
+    }
+
+    if (whatsappCheckbox) {
+        whatsappCheckbox.addEventListener('change', toggleWhatsApp);
+    }
+
+    // Load initial data
+    loadLocations();
+    loadWhatsAppConfig();
+}
 
 // Initialize immediately when script loads
 console.log('[STARTUP] Initializing dashboard...');
@@ -1175,43 +1307,49 @@ if (document.readyState === 'loading') {
 async function calculateBidPrices(marketRateInput, cargoIndex) {
     const marketRate = parseFloat(marketRateInput.value);
     const enquiryNumber = marketRateInput.dataset.enquiry;
-    
+
     if (!marketRate || marketRate <= 0) {
         console.log('[CALC] Invalid market rate, clearing bid prices');
         clearBidPrices(enquiryNumber, cargoIndex);
         return;
     }
-    
+
+    // FIX: Validate that we're not using an already calculated price as market rate
+    // If market rate seems too high (likely already calculated), warn user
+    if (marketRate > 100000) {
+        console.warn(`[CALC] Warning: Market rate ₹${marketRate} seems high - ensure this is the base rate, not a calculated price`);
+    }
+
     try {
         // Fetch pricing percentages
         const response = await fetch('/api/public/percentages');
         const data = await response.json();
         const percentages = data.pricePercents || { high: 9, medium: 7, low: 5 };
-        
+
         // Calculate bid prices
         const highPrice = Math.round(marketRate * (1 + percentages.high / 100));
         const mediumPrice = Math.round(marketRate * (1 + percentages.medium / 100));
         const lowPrice = Math.round(marketRate * (1 + percentages.low / 100));
-        
+
         console.log(`[CALC] Cargo ${cargoIndex}: Market ₹${marketRate} -> High ₹${highPrice}, Medium ₹${mediumPrice}, Low ₹${lowPrice}`);
-        
+
         // Update the corresponding bid input fields
         const highInput = document.querySelector(`input.cargo-input[data-cargo-index="${cargoIndex}"][data-type="high"]`);
         const mediumInput = document.querySelector(`input.cargo-input[data-cargo-index="${cargoIndex}"][data-type="medium"]`);
         const lowInput = document.querySelector(`input.cargo-input[data-cargo-index="${cargoIndex}"][data-type="low"]`);
-        
+
         if (highInput) highInput.value = highPrice;
         if (mediumInput) mediumInput.value = mediumPrice;
         if (lowInput) lowInput.value = lowPrice;
-        
+
         // Trigger change events to update validation
         [highInput, mediumInput, lowInput].forEach(input => {
             if (input) input.dispatchEvent(new Event('input'));
         });
-        
+
         // Save market rate to server for persistence
         await saveMarketRate(enquiryNumber, cargoIndex, marketRate);
-        
+
     } catch (error) {
         console.error('[CALC] Error calculating bid prices:', error);
     }
@@ -1220,43 +1358,49 @@ async function calculateBidPrices(marketRateInput, cargoIndex) {
 async function calculateBidPricesSingle(marketRateInput) {
     const marketRate = parseFloat(marketRateInput.value);
     const enquiryNumber = marketRateInput.dataset.enquiry;
-    
+
     if (!marketRate || marketRate <= 0) {
         console.log('[CALC] Invalid market rate, clearing bid prices');
         clearBidPricesSingle(enquiryNumber);
         return;
     }
-    
+
+    // FIX: Validate that we're not using an already calculated price as market rate
+    // If market rate seems too high (likely already calculated), warn user
+    if (marketRate > 100000) {
+        console.warn(`[CALC] Warning: Market rate ₹${marketRate} seems high - ensure this is the base rate, not a calculated price`);
+    }
+
     try {
         // Fetch pricing percentages
         const response = await fetch('/api/public/percentages');
         const data = await response.json();
         const percentages = data.pricePercents || { high: 9, medium: 7, low: 5 };
-        
+
         // Calculate bid prices
         const highPrice = Math.round(marketRate * (1 + percentages.high / 100));
         const mediumPrice = Math.round(marketRate * (1 + percentages.medium / 100));
         const lowPrice = Math.round(marketRate * (1 + percentages.low / 100));
-        
+
         console.log(`[CALC] Single cargo: Market ₹${marketRate} -> High ₹${highPrice}, Medium ₹${mediumPrice}, Low ₹${lowPrice}`);
-        
+
         // Update the corresponding bid input fields
         const highInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="high"]`);
         const mediumInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="medium"]`);
         const lowInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="low"]`);
-        
+
         if (highInput) highInput.value = highPrice;
         if (mediumInput) mediumInput.value = mediumPrice;
         if (lowInput) lowInput.value = lowPrice;
-        
+
         // Trigger change events to update validation
         [highInput, mediumInput, lowInput].forEach(input => {
             if (input) input.dispatchEvent(new Event('input'));
         });
-        
+
         // Save market rate to server for persistence
         await saveMarketRate(enquiryNumber, null, marketRate);
-        
+
     } catch (error) {
         console.error('[CALC] Error calculating bid prices:', error);
     }
@@ -1266,7 +1410,7 @@ function clearBidPrices(enquiryNumber, cargoIndex) {
     const highInput = document.querySelector(`input.cargo-input[data-cargo-index="${cargoIndex}"][data-type="high"]`);
     const mediumInput = document.querySelector(`input.cargo-input[data-cargo-index="${cargoIndex}"][data-type="medium"]`);
     const lowInput = document.querySelector(`input.cargo-input[data-cargo-index="${cargoIndex}"][data-type="low"]`);
-    
+
     [highInput, mediumInput, lowInput].forEach(input => {
         if (input) {
             input.value = '';
@@ -1279,7 +1423,7 @@ function clearBidPricesSingle(enquiryNumber) {
     const highInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="high"]`);
     const mediumInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="medium"]`);
     const lowInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="low"]`);
-    
+
     [highInput, mediumInput, lowInput].forEach(input => {
         if (input) {
             input.value = '';
@@ -1302,7 +1446,7 @@ async function saveMarketRate(enquiryNumber, cargoIndex, marketRate) {
                 marketRate: marketRate
             })
         });
-        
+
         if (!response.ok) {
             console.error('[SAVE MARKET RATE] Failed to save market rate:', response.statusText);
         } else {

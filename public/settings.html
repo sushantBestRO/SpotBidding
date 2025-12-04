@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GoComet Bidder - Settings</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="container">
         <header>
             <div class="logo-section">
                 <div class="logo">
                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                        <circle cx="20" cy="20" r="18" stroke="#4CAF50" stroke-width="2"/>
-                        <path d="M15 20L18 23L25 16" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="20" cy="20" r="18" stroke="#4CAF50" stroke-width="2" />
+                        <path d="M15 20L18 23L25 16" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
                     </svg>
                 </div>
                 <h1>GoComet Bidder - Settings</h1>
@@ -25,81 +28,303 @@
         </header>
 
         <main>
+            <!-- Settings Navigation Tabs -->
+            <div class="settings-nav">
+                <button class="settings-tab active" data-tab="system">System Settings</button>
+                <button class="settings-tab" data-tab="notifications">Notifications</button>
+                <button class="settings-tab" data-tab="locations">Plant Locations</button>
+                <button class="settings-tab" data-tab="users">User Management</button>
+                <button class="settings-tab" data-tab="monitoring">Monitoring</button>
+            </div>
+
             <div class="settings-container">
-                <!-- Pricing Settings Section -->
-                <div class="settings-section">
-                    <h2>Pricing Percentages</h2>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>HIGH (+%)</label>
-                            <input type="number" id="percentHigh" placeholder="9" min="0" max="100" step="0.01" />
+                <!-- System Settings Tab -->
+                <div class="settings-tab-content active" id="system-tab">
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <h2>Pricing Configuration</h2>
+                            <p>Configure bid pricing percentages for market rates</p>
                         </div>
-                        <div class="form-group">
-                            <label>MEDIUM (+%)</label>
-                            <input type="number" id="percentMedium" placeholder="7" min="0" max="100" step="0.01" />
-                        </div>
-                        <div class="form-group">
-                            <label>LOW (+%)</label>
-                            <input type="number" id="percentLow" placeholder="5" min="0" max="100" step="0.01" />
+                        <div class="card-content">
+                            <div class="pricing-grid">
+                                <div class="pricing-item">
+                                    <label>HIGH Bid (+%)</label>
+                                    <input type="number" id="percentHigh" placeholder="9" min="0" max="100"
+                                        step="0.01" />
+                                    <span class="input-hint">Aggressive bidding percentage</span>
+                                </div>
+                                <div class="pricing-item">
+                                    <label>MEDIUM Bid (+%)</label>
+                                    <input type="number" id="percentMedium" placeholder="7" min="0" max="100"
+                                        step="0.01" />
+                                    <span class="input-hint">Standard bidding percentage</span>
+                                </div>
+                                <div class="pricing-item">
+                                    <label>LOW Bid (+%)</label>
+                                    <input type="number" id="percentLow" placeholder="5" min="0" max="100"
+                                        step="0.01" />
+                                    <span class="input-hint">Conservative bidding percentage</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="savePricingSettings()">Save Pricing
+                                    Settings</button>
+                            </div>
                         </div>
                     </div>
-                    <button class="btn btn-primary" onclick="savePricingSettings()">Save Percentages</button>
-                    <p class="note">These settings control how the public enquiry page computes HIGH, MEDIUM and LOW from a market value.</p>
+
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <h2>Password Security</h2>
+                            <p>Change your account password</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="password-form">
+                                <div class="form-group">
+                                    <label>Current Password</label>
+                                    <input type="password" id="currentPassword" placeholder="Enter current password" />
+                                </div>
+                                <div class="form-group">
+                                    <label>New Password</label>
+                                    <input type="password" id="newPasswordChange" placeholder="Enter new password" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm New Password</label>
+                                    <input type="password" id="confirmPassword" placeholder="Confirm new password" />
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="changeOwnPassword()">Update Password</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <!-- User Management Section -->
-                <div class="settings-section">
-                    <h2>User Management</h2>
-                    <div class="user-list" id="userList">
-                        <div class="loading">Loading users...</div>
+
+                <!-- Notifications Tab -->
+                <div class="settings-tab-content" id="notifications-tab">
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <h2>Email Reports</h2>
+                            <p>Configure automated daily email reports</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="notification-grid">
+                                <div class="form-group">
+                                    <label>Recipient Email</label>
+                                    <input type="email" id="recipientEmail" placeholder="reports@company.com" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Send Time</label>
+                                    <input type="time" id="reportTime" value="21:00" />
+                                </div>
+                                <div class="toggle-group">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="enableReports" checked />
+                                        <span class="toggle-slider"></span>
+                                        <span class="toggle-label">Enable Daily Reports</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="saveEmailSettings()">Save Email
+                                    Settings</button>
+                                <button class="btn btn-secondary" onclick="testEmail()">Send Test Email</button>
+                            </div>
+                            <div id="emailStatus" class="status-message" style="display: none;"></div>
+                        </div>
                     </div>
-                    
-                    <div class="add-user-form">
+
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <h2>WhatsApp Notifications</h2>
+                            <p>Configure WhatsApp integration for bid notifications</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="notification-grid">
+                                <div class="form-group">
+                                    <label>DoubleTick API Key</label>
+                                    <input type="password" id="whatsappApiKey"
+                                        placeholder="Enter your DoubleTick API key" />
+                                </div>
+                                <div class="form-group">
+                                    <label>WhatsApp Number</label>
+                                    <input type="tel" id="whatsappSenderNumber" placeholder="+91 XXXXXXXXXX" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Template Name</label>
+                                    <input type="text" id="whatsappTemplateName" placeholder="hello_world" />
+                                    <div class="input-hint">Use approved WhatsApp template name from DoubleTick</div>
+                                </div>
+                                <div class="toggle-group">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="enableWhatsApp" />
+                                        <span class="toggle-slider"></span>
+                                        <span class="toggle-label">Enable WhatsApp Notifications</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="saveWhatsAppSettings()">Save WhatsApp
+                                    Settings</button>
+                                <button class="btn btn-secondary" onclick="testWhatsApp()">Send Test Message</button>
+                            </div>
+                            <div id="whatsappStatus" class="status-message" style="display: none;"></div>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <h2>WhatsApp Templates</h2>
+                            <p>Create and manage WhatsApp message templates for freight bidding</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label>Template Creation</label>
+                                <div class="input-hint">Create 4 pre-designed templates for freight bidding
+                                    notifications</div>
+                            </div>
+
+                            <div id="templatesList" class="templates-grid">
+                                <div class="loading">Loading templates...</div>
+                            </div>
+
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="createAllTemplates()">Create All
+                                    Templates</button>
+                                <button class="btn btn-secondary" onclick="loadTemplates()">Refresh Status</button>
+                                <button class="btn btn-secondary" onclick="showTemplateReport()">View Report</button>
+                            </div>
+                            <div id="templateStatus" class="status-message" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Locations Tab -->
+                <div class="settings-tab-content" id="locations-tab">
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <h2>Plant Locations</h2>
+                            <p>Manage plant locations and contact information</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="locations-grid" id="locationList">
+                                <div class="loading">Loading locations...</div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="showAddLocationModal()">Add New
+                                    Location</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Tab -->
+                <div class="settings-tab-content" id="users-tab">
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <h2>User Management</h2>
+                            <p>Manage system users and permissions</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="users-grid" id="userList">
+                                <div class="loading">Loading users...</div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="showAddUserModal()">Add New User</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monitoring Tab -->
+                <div class="settings-tab-content" id="monitoring-tab">
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <h2>Active Bidding Status</h2>
+                            <p>Monitor currently active bidding sessions</p>
+                        </div>
+                        <div class="card-content">
+                            <div id="activeBiddingStatus" class="monitoring-grid">
+                                <div class="loading">Loading active bids...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Location Modal -->
+            <div class="modal" id="addLocationModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Add New Plant Location</h3>
+                        <button class="modal-close" onclick="closeAddLocationModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Location ID</label>
+                            <input type="text" id="newLocationId" placeholder="e.g., mumbai" />
+                        </div>
+                        <div class="form-group">
+                            <label>Plant Name</label>
+                            <input type="text" id="newPlantName" placeholder="Mumbai Plant" />
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea id="newSourceLocation" placeholder="Complete plant address" rows="3"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Contact Person</label>
+                                <input type="text" id="newConcernedPerson" placeholder="Person name" />
+                            </div>
+                            <div class="form-group">
+                                <label>Mobile Number</label>
+                                <input type="tel" id="newMobile" placeholder="+91 XXXXXXXXXX" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="newEmail" placeholder="contact@company.com" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="closeAddLocationModal()">Cancel</button>
+                        <button class="btn btn-primary" onclick="addLocation()">Add Location</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add User Modal -->
+            <div class="modal" id="addUserModal">
+                <div class="modal-content">
+                    <div class="modal-header">
                         <h3>Add New User</h3>
+                        <button class="modal-close" onclick="closeAddUserModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
                         <div class="form-group">
                             <label>Username</label>
                             <input type="text" id="newUsername" placeholder="Enter username" />
                         </div>
                         <div class="form-group">
-                            <label>Name</label>
+                            <label>Full Name</label>
                             <input type="text" id="newName" placeholder="Enter full name" />
                         </div>
                         <div class="form-group">
                             <label>Password</label>
                             <input type="password" id="newPassword" placeholder="Enter password" />
                         </div>
-                        <div class="form-group">
-                            <label>
+                        <div class="toggle-group">
+                            <label class="toggle-switch">
                                 <input type="checkbox" id="newIsAdmin" />
-                                Admin privileges
+                                <span class="toggle-slider"></span>
+                                <span class="toggle-label">Admin Privileges</span>
                             </label>
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="closeAddUserModal()">Cancel</button>
                         <button class="btn btn-primary" onclick="addUser()">Add User</button>
-                    </div>
-                </div>
-
-                <!-- Password Change Section -->
-                <div class="settings-section">
-                    <h2>Change Password</h2>
-                    <div class="form-group">
-                        <label>Current Password</label>
-                        <input type="password" id="currentPassword" placeholder="Enter current password" />
-                    </div>
-                    <div class="form-group">
-                        <label>New Password</label>
-                        <input type="password" id="newPasswordChange" placeholder="Enter new password" />
-                    </div>
-                    <div class="form-group">
-                        <label>Confirm New Password</label>
-                        <input type="password" id="confirmPassword" placeholder="Confirm new password" />
-                    </div>
-                    <button class="btn btn-primary" onclick="changeOwnPassword()">Change My Password</button>
-                </div>
-
-                <!-- Active Bidding Status -->
-                <div class="settings-section">
-                    <h2>Active Bidding Status</h2>
-                    <div id="activeBiddingStatus" class="active-bidding-list">
-                        <div class="loading">Loading active bids...</div>
                     </div>
                 </div>
             </div>
@@ -112,4 +337,5 @@
 
     <script src="settings.js"></script>
 </body>
+
 </html>

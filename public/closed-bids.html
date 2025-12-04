@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Today's Closed Bids - GoComet Bidder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header-controls">
+            <div>
+                <h1 id="pageTitle">Today's Closed Bids</h1>
+                <p style="color: #666; margin: 5px 0 0;" id="pageSubtitle">Review completed enquiries and performance
+                </p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <div class="date-filter">
+                    <div class="date-mode-toggle">
+                        <button class="date-mode-btn active" onclick="setDateMode('single')">Single Date</button>
+                        <button class="date-mode-btn" onclick="setDateMode('range')">Date Range</button>
+                    </div>
+
+                    <div id="singleDateSection" class="date-section">
+                        <label>Select Date:</label>
+                        <div class="date-picker-container">
+                            <input type="date" id="dateFilter" title="Click to open calendar" />
+                            <span class="calendar-icon">📅</span>
+                        </div>
+                        <div class="quick-dates">
+                            <button class="quick-date-btn active" onclick="setQuickDate('today')">Today</button>
+                            <button class="quick-date-btn" onclick="setQuickDate('yesterday')">Yesterday</button>
+                        </div>
+                    </div>
+
+                    <div id="dateRangeSection" class="date-section" style="display: none;">
+                        <label>From Date:</label>
+                        <input type="date" id="fromDate" title="Select start date" />
+                        <label style="margin-left: 10px;">To Date:</label>
+                        <input type="date" id="toDate" title="Select end date" />
+                    </div>
+
+                    <button class="btn-refresh" onclick="loadClosedBids()">🔄 Refresh</button>
+                    <button class="btn-export" onclick="exportToExcel()" id="exportBtn" disabled>📊 Export
+                        Excel</button>
+                </div>
+                <a href="/" class="btn-back">← Back to Dashboard</a>
+            </div>
+        </div>
+
+        <div class="stats-summary" id="statsContainer">
+            <div class="stat-card won">
+                <h3 id="wonCount">-</h3>
+                <p>Bids Won</p>
+            </div>
+            <div class="stat-card lost">
+                <h3 id="lostCount">-</h3>
+                <p>Bids Lost</p>
+            </div>
+            <div class="stat-card closed">
+                <h3 id="closedCount">-</h3>
+                <p>Closed/No Quote</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="participationRate">-</h3>
+                <p>Participation Rate</p>
+            </div>
+        </div>
+
+        <div class="bids-table">
+            <div class="table-header">
+                <h3>Closed Bids</h3>
+            </div>
+            <div class="table-content">
+                <div id="loadingMessage" class="loading">Loading closed bids...</div>
+                <div id="errorMessage" class="error" style="display: none;"></div>
+                <div id="noDataMessage" class="no-data" style="display: none;">No closed bids found for the selected
+                    date.</div>
+                <table id="bidsTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Enquiry</th>
+                            <th>Route</th>
+                            <th>Cargo</th>
+                            <th>Closed At</th>
+                            <th>Status</th>
+                            <th>Rank</th>
+                            <th>Quotes Sent</th>
+                            <th>Company</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bidsTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="closed-bids.js"></script>
+</body>
+
+</html>

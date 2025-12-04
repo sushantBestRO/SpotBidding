@@ -1,142 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enquiry Pricing</title>
   <link rel="stylesheet" href="/styles.css" />
-  <style>
-    .container { max-width: 720px; margin: 40px auto; padding: 20px; }
-    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
-    .row { display: flex; gap: 12px; }
-    .row .col { flex: 1; }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .input { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; }
-    .label { font-weight: 600; color: #374151; margin-bottom: 6px; display: block; }
-    .stat { background:#f9fafb; padding: 14px; border-radius: 10px; text-align:center; border:1px solid #eef2f7; }
-    .stat h3 { margin: 0 0 6px; font-size: 14px; color:#6b7280; }
-    .stat .value { font-size: 20px; font-weight: 700; color:#111827; }
-    .sub { color:#6b7280; font-size: 13px; margin-top: 4px; }
-    .btn { background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
-    .btn:hover:not(:disabled) { background: #45a049; }
-    .btn:disabled { background: #ccc; cursor: not-allowed; }
-    .btn-primary { background: #4CAF50; }
-    .cargo-input-group { margin-bottom: 12px; }
-    .cargo-input-group label { display: block; margin-bottom: 4px; font-weight: 600; color: #374151; }
-    .cargo-input-group .input { margin-bottom: 0; }
-  </style>
 </head>
+
 <body>
-  <div class="container">
-    <div class="card">
+  <div class="enquiry-container">
+    <div class="enquiry-card">
       <h2 id="title">Enquiry</h2>
-      <p class="sub">This link is public and does not require login.</p>
-      <div class="row" style="margin-top:16px;">
-        <div class="col">
-          <label class="label">Enquiry ID (GID)</label>
-          <input id="enquiryId" class="input" type="text" readonly />
+      <p class="enquiry-subtitle">This link is public and does not require login.</p>
+      <div class="enquiry-row">
+        <div class="enquiry-col">
+          <label class="enquiry-label">Enquiry ID (GID)</label>
+          <input id="enquiryId" class="enquiry-input" type="text" readonly />
         </div>
-        <div class="col">
+        <div class="enquiry-col">
           <div id="singleCargoSection">
-            <label class="label">Market Rate (₹ per unit)</label>
-            <input id="marketValue" class="input" type="number" placeholder="Enter rate per unit" />
-            <div id="unitHint" style="font-size: 12px; color: #666; margin-top: 4px;"></div>
+            <label class="enquiry-label">Market Rate (₹ per unit)</label>
+            <input id="marketValue" class="enquiry-input" type="number" placeholder="Enter rate per unit" />
+            <div id="unitHint" class="enquiry-hint"></div>
           </div>
           <div id="multiCargoSection" style="display: none;">
-            <label class="label">Market Rates (₹ per unit for each cargo type)</label>
+            <label class="enquiry-label">Market Rates (₹ per unit for each cargo type)</label>
             <div id="cargoInputs"></div>
-            <div id="multiUnitHint" style="font-size: 12px; color: #666; margin-top: 4px;"></div>
+            <div id="multiUnitHint" class="enquiry-hint"></div>
           </div>
         </div>
       </div>
-      <div style="margin-top:16px; text-align: center;">
-        <button id="submitBid" class="btn btn-primary" style="padding: 12px 24px; font-size: 16px;" disabled>
+      <div style="text-align: center;">
+        <button id="submitBid" class="btn btn-primary enquiry-submit" disabled>
           Submit Market Rate
         </button>
-        <div id="submitStatus" style="margin-top: 8px; font-size: 14px;"></div>
+        <div id="submitStatus" class="enquiry-hint" style="margin-top: var(--space-sm);"></div>
       </div>
 
-      <div class="card" style="margin-top:16px;">
-        <h3 style="margin-top:0; margin-bottom:12px; color:#374151;">Enquiry Details</h3>
-        
-        <div class="row">
-          <div class="col">
-            <div class="label">Display Name</div>
-            <div id="detailDisplay">—</div>
+      <div class="enquiry-card" style="margin-top: var(--space-lg);">
+        <h3
+          style="margin: 0 0 var(--space-lg); color: var(--gray-800); font-weight: var(--font-weight-bold); font-size: 1.25rem;">
+          Enquiry Details</h3>
+
+        <div class="enquiry-row">
+          <div class="enquiry-col">
+            <div class="enquiry-label">Display Name</div>
+            <div id="detailDisplay" style="color: var(--gray-900); font-weight: var(--font-weight-medium);">—</div>
           </div>
-          <div class="col">
-            <div class="label">Status</div>
-            <div id="detailStatus">—</div>
-          </div>
-        </div>
-        
-        <div class="row" style="margin-top:10px;">
-          <div class="col">
-            <div class="label">Company</div>
-            <div id="detailCompany">—</div>
-          </div>
-          <div class="col">
-            <div class="label">Contact Person</div>
-            <div id="detailContact">—</div>
+          <div class="enquiry-col">
+            <div class="enquiry-label">Status</div>
+            <div id="detailStatus" style="color: var(--gray-900); font-weight: var(--font-weight-medium);">—</div>
           </div>
         </div>
-        
-        <div class="row" style="margin-top:10px;">
-          <div class="col">
-            <div class="label">Route</div>
-            <div id="detailRoute">—</div>
+
+        <div class="enquiry-row" style="margin-top: var(--space-md);">
+          <div class="enquiry-col">
+            <div class="enquiry-label">Company</div>
+            <div id="detailCompany" style="color: var(--gray-900); font-weight: var(--font-weight-medium);">—</div>
           </div>
-          <div class="col">
-            <div class="label">Transport Type</div>
-            <div id="detailType">—</div>
-          </div>
-        </div>
-        
-        <div class="row" style="margin-top:10px;">
-          <div class="col">
-            <div class="label">Cargo Quantity</div>
-            <div id="detailCargo">—</div>
-          </div>
-          <div class="col">
-            <div class="label">Quotes Sent</div>
-            <div id="detailQuotes">—</div>
+          <div class="enquiry-col">
+            <div class="enquiry-label">Contact Person</div>
+            <div id="detailContact" style="color: var(--gray-900); font-weight: var(--font-weight-medium);">—</div>
           </div>
         </div>
-        
-        <div class="row" style="margin-top:10px;" id="unitDetailsRow" style="display:none;">
-          <div class="col" style="grid-column: 1 / -1;">
-            <div class="label">Bidding Units</div>
-            <div id="detailUnits" style="background: #f0f8ff; padding: 8px; border-radius: 4px; font-size: 14px;">—</div>
+
+        <div class="enquiry-row" style="margin-top: var(--space-md);">
+          <div class="enquiry-col">
+            <div class="enquiry-label">Route</div>
+            <div id="detailRoute" style="color: var(--info); font-weight: var(--font-weight-semibold);">—</div>
+          </div>
+          <div class="enquiry-col">
+            <div class="enquiry-label">Transport Type</div>
+            <div id="detailType" style="color: var(--gray-900); font-weight: var(--font-weight-medium);">—</div>
           </div>
         </div>
-        
-        <div class="row" style="margin-top:10px;">
-          <div class="col">
-            <div class="label">Current Rank</div>
-            <div id="detailRank">—</div>
+
+        <div class="enquiry-row" style="margin-top: var(--space-md);">
+          <div class="enquiry-col">
+            <div class="enquiry-label">Cargo Quantity</div>
+            <div id="detailCargo" style="color: var(--gray-900); font-weight: var(--font-weight-medium);">—</div>
           </div>
-          <div class="col">
-            <div class="label">Time Remaining</div>
-            <div id="detailTime">—</div>
-          </div>
-        </div>
-        
-        <div class="row" style="margin-top:10px;">
-          <div class="col">
-            <div class="label">Closing Time</div>
-            <div id="detailClosing">—</div>
-          </div>
-          <div class="col">
-            <div class="label">Revisions Left</div>
-            <div id="detailRevisions">—</div>
+          <div class="enquiry-col">
+            <div class="enquiry-label">Quotes Sent</div>
+            <div id="detailQuotes" style="color: var(--primary-600); font-weight: var(--font-weight-bold);">—</div>
           </div>
         </div>
+
+        <div class="enquiry-row" style="margin-top: var(--space-md);" id="unitDetailsRow" style="display:none;">
+          <div class="enquiry-col" style="grid-column: 1 / -1;">
+            <div class="enquiry-label">Bidding Units</div>
+            <div id="detailUnits"
+              style="background: linear-gradient(135deg, #f0f8ff, #e6f3ff); padding: var(--space-md); border-radius: var(--radius-md); font-size: 0.9rem; color: var(--info); font-weight: var(--font-weight-medium);">
+              —</div>
+          </div>
+        </div>
+
+        <div class="enquiry-row" style="margin-top: var(--space-md);">
+          <div class="enquiry-col">
+            <div class="enquiry-label">Current Rank</div>
+            <div id="detailRank" style="color: var(--warning); font-weight: var(--font-weight-bold);">—</div>
+          </div>
+          <div class="enquiry-col">
+            <div class="enquiry-label">Time Remaining</div>
+            <div id="detailTime" style="color: var(--success); font-weight: var(--font-weight-bold);">—</div>
+          </div>
+        </div>
+
+        <div class="enquiry-row" style="margin-top: var(--space-md);">
+          <div class="enquiry-col">
+            <div class="enquiry-label">Closing Time</div>
+            <div id="detailClosing" style="color: var(--warning); font-weight: var(--font-weight-bold);">—</div>
+          </div>
+          <div class="enquiry-col">
+            <div class="enquiry-label">Revisions Left</div>
+            <div id="detailRevisions" style="color: var(--gray-900); font-weight: var(--font-weight-medium);">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        style="text-align: center; margin-top: var(--space-lg); color: var(--gray-500); font-size: 0.8rem; font-weight: var(--font-weight-medium);">
+        🔐 This link is unique to this enquiry. Do not share this link with others.
       </div>
     </div>
   </div>
 
   <script src="/enquiry.js"></script>
 </body>
+
 </html>
-
-
