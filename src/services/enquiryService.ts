@@ -450,9 +450,9 @@ export const processQuotes = async (enquiries: any[], userSession: any) => {
                 const dbUpdatedBy = marketRates.default?.updatedBy || '';
                 const dbUpdatedAt = marketRates.default?.updatedAt || '';
 
-                if (monitor && monitor.config && monitor.config.bids) {
+                if (monitor && monitor.bids) {
                     return {
-                        //...monitor.config.bids,
+                        ...monitor.bids,
                         high: enquiry.bidHighAmount,
                         medium: enquiry.bidMediumAmount,
                         low: enquiry.bidLowAmount,

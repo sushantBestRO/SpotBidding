@@ -16,7 +16,8 @@ interface BidMonitorState {
     currentRank: number | null;
     bidsSubmitted: number;
     intervalId: NodeJS.Timeout | null;
-    config: any;
+    currentPollingInterval: number; // Track the current interval duration in ms
+    bids: any;
     strategyName: string;
     lastKnownCloseTime?: Date;
     startedBy: string;
@@ -69,7 +70,8 @@ class BiddingEngine {
             currentRank: null,
             bidsSubmitted: 0,
             intervalId: null,
-            config: bidConfig,
+            currentPollingInterval: 5000, // Start with 5 second interval
+            bids: bidConfig,
             strategyName,
             lastKnownCloseTime: initialCloseTime,
             startedBy: user.username || 'unknown',
@@ -119,6 +121,15 @@ class BiddingEngine {
         // Initial check
         this.checkAndBid(enquiryKey, authToken);
 
+        // Update enquiry table with bidding status
+        await db.update(enquiries)
+            .set({
+                biddingStatus: 'active',
+                updatedBy: user.username,
+                updatedAt: new Date()
+            })
+            .where(eq(enquiries.enquiryKey, enquiryKey));
+
         return monitor;
     }
 
@@ -141,6 +152,15 @@ class BiddingEngine {
             })
             .where(eq(bidMonitors.enquiryKey, enquiryKey));
 
+        // Update enquiry table with bidding status
+        await db.update(enquiries)
+            .set({
+                biddingStatus: 'stopped',
+                updatedBy: user.username,
+                updatedAt: new Date()
+            })
+            .where(eq(enquiries.enquiryKey, enquiryKey));
+
         return true;
     }
 
@@ -150,6 +170,129 @@ class BiddingEngine {
 
     public getAllStatuses() {
         return Array.from(this.monitors.values());
+    }
+
+    /**
+     * Restore active monitors from database on server startup
+     * Only restores monitors for bids that are still open
+     */
+    public async restoreActiveMonitors() {
+        try {
+            console.log('[BIDDING ENGINE] Restoring active monitors from database...');
+
+            // Get system config for auth token
+            const sysConf = await db.select().from(systemConfig).limit(1);
+            const authToken = sysConf[0]?.globalAuthToken;
+            if (!authToken) {
+                console.warn('[BIDDING ENGINE] No auth token found, cannot restore monitors');
+                return;
+            }
+
+            // Get all active bid monitors
+            const activeMonitors = await db.select()
+                .from(bidMonitors)
+                .where(eq(bidMonitors.active, true));
+
+            console.log(`[BIDDING ENGINE] Found ${activeMonitors.length} active monitors to restore`);
+
+            for (const monitorRecord of activeMonitors) {
+                const enquiryKey = monitorRecord.enquiryKey;
+                const data = monitorRecord.data as any;
+
+                // Check if this enquiry still exists and is not closed
+                const enquiryRecords = await db.select()
+                    .from(enquiries)
+                    .where(eq(enquiries.enquiryKey, enquiryKey))
+                    .limit(1);
+
+                if (enquiryRecords.length === 0) {
+                    console.log(`[BIDDING ENGINE] Enquiry ${enquiryKey} not found, skipping`);
+                    continue;
+                }
+
+                const enquiry = enquiryRecords[0];
+
+                // Check if bidding is closed
+                if (enquiry.biddingClosed) {
+                    console.log(`[BIDDING ENGINE] Enquiry ${enquiryKey} is closed, marking monitor as stopped`);
+                    await db.update(bidMonitors)
+                        .set({ active: false, status: 'completed' })
+                        .where(eq(bidMonitors.enquiryKey, enquiryKey));
+                    await db.update(enquiries)
+                        .set({ biddingStatus: 'stopped' })
+                        .where(eq(enquiries.enquiryKey, enquiryKey));
+                    continue;
+                }
+
+                // Check if bid close time has passed
+                if (enquiry.bidCloseTime && new Date(enquiry.bidCloseTime) < new Date()) {
+                    console.log(`[BIDDING ENGINE] Enquiry ${enquiryKey} bid time has passed, marking as stopped`);
+                    await db.update(bidMonitors)
+                        .set({ active: false, status: 'completed' })
+                        .where(eq(bidMonitors.enquiryKey, enquiryKey));
+                    await db.update(enquiries)
+                        .set({ biddingStatus: 'stopped' })
+                        .where(eq(enquiries.enquiryKey, enquiryKey));
+                    continue;
+                }
+
+                // Restore the monitor
+                try {
+                    const strategyName = data.strategy || 'GoComet';
+                    const strategy = this.strategies.get(strategyName);
+                    if (!strategy) {
+                        console.warn(`[BIDDING ENGINE] Strategy ${strategyName} not found for ${enquiryKey}`);
+                        continue;
+                    }
+
+                    // Fetch current bidding data
+                    let initialCloseTime: Date | undefined;
+                    let initialTimeRemaining: number | null = null;
+                    try {
+                        const biddingData = await strategy.fetchBiddingData(enquiryKey, authToken);
+                        if (biddingData.bidCloseTime) {
+                            initialCloseTime = new Date(biddingData.bidCloseTime);
+                        }
+                        initialTimeRemaining = biddingData.bidClosingIn || null;
+                    } catch (e) {
+                        console.warn(`[BIDDING ENGINE] Could not fetch data for ${enquiryKey}:`, e);
+                    }
+
+                    const monitor: BidMonitorState = {
+                        enquiryKey,
+                        status: 'active',
+                        currentRank: data.currentRank || null,
+                        bidsSubmitted: data.bidsSubmitted || 0,
+                        intervalId: null,
+                        currentPollingInterval: 5000,
+                        bids: data,
+                        strategyName,
+                        lastKnownCloseTime: initialCloseTime || enquiry.bidCloseTime || undefined,
+                        startedBy: monitorRecord.createdBy || 'system',
+                        userFullName: data.userFullName || 'System Restore',
+                        timeRemaining: initialTimeRemaining
+                    };
+
+                    this.monitors.set(enquiryKey, monitor);
+
+                    // Start monitoring loop
+                    monitor.intervalId = setInterval(() => this.checkAndBid(enquiryKey, authToken), 5000);
+
+                    // Initial check
+                    this.checkAndBid(enquiryKey, authToken);
+
+                    console.log(`[BIDDING ENGINE] ✅ Restored monitor for ${enquiryKey} (${data.bidsSubmitted || 0} bids submitted)`);
+
+                } catch (error: any) {
+                    console.error(`[BIDDING ENGINE] Error restoring monitor for ${enquiryKey}:`, error.message);
+                }
+            }
+
+            console.log(`[BIDDING ENGINE] Restoration complete. ${this.monitors.size} monitors active.`);
+
+        } catch (error: any) {
+            console.error('[BIDDING ENGINE] Error restoring active monitors:', error.message);
+        }
     }
 
     private async checkAndBid(enquiryKey: string, authToken: string) {
@@ -165,69 +308,262 @@ class BiddingEngine {
             monitor.currentRank = data.vendorRank;
             monitor.timeRemaining = data.bidClosingIn;
 
-            logBid(enquiryKey, `Rank: ${monitor.currentRank}, Time Left: ${data.bidClosingIn}s`);
+            logBid(enquiryKey, `Rank: ${monitor.currentRank}, Time Left: ${data.bidClosingIn}s, Bids: ${monitor.bidsSubmitted}/3`);
 
-            // Update DB with latest stats periodically (or every check if critical)
-            // For now, we update on every check to keep DB in sync for status polling
-            await db.update(bidMonitors)
-                .set({
-                    data: {
-                        ...monitor.config,
-                        strategy: monitor.strategyName,
-                        userFullName: monitor.userFullName,
-                        bidsSubmitted: monitor.bidsSubmitted,
-                        currentRank: monitor.currentRank,
-                        timeRemaining: monitor.timeRemaining
-                    },
-                    updatedAt: new Date()
-                })
-                .where(eq(bidMonitors.enquiryKey, enquiryKey));
+            // Check if bidding is closed
+            if (data.biddingClosed || (data.bidClosingIn !== null && data.bidClosingIn <= 0)) {
+                logBid(enquiryKey, '🏁 Bidding closed, stopping monitor');
 
-            // Check for extension
-            if (data.bidCloseTime) {
-                const newCloseTime = new Date(data.bidCloseTime);
+                // Stop the monitor
+                if (monitor.intervalId) clearInterval(monitor.intervalId);
+                monitor.status = 'completed';
+                this.monitors.delete(enquiryKey);
 
-                if (monitor.lastKnownCloseTime && newCloseTime.getTime() > monitor.lastKnownCloseTime.getTime() + 60000) {
-                    // Extension detected (> 1 min difference)
-                    logBid(enquiryKey, `Extension detected! ${monitor.lastKnownCloseTime.toISOString()} -> ${newCloseTime.toISOString()}`);
+                // Update database
+                await db.update(bidMonitors)
+                    .set({
+                        status: 'completed',
+                        active: false,
+                        updatedAt: new Date()
+                    })
+                    .where(eq(bidMonitors.enquiryKey, enquiryKey));
 
-                    // Update DB
-                    try {
-                        // Get current enquiry to get ID and count
-                        const storedEnquiry = await db.select().from(enquiries).where(eq(enquiries.enquiryKey, enquiryKey)).limit(1);
+                await db.update(enquiries)
+                    .set({
+                        biddingStatus: 'stopped',
+                        updatedAt: new Date()
+                    })
+                    .where(eq(enquiries.enquiryKey, enquiryKey));
 
-                        if (storedEnquiry.length > 0) {
-                            const newCount = (storedEnquiry[0].extensionCount || 0) + 1;
-
-                            await db.insert(enquiryExtensions).values({
-                                enquiryId: storedEnquiry[0].id,
-                                extensionNumber: newCount,
-                                previousBidCloseTime: monitor.lastKnownCloseTime,
-                                newBidCloseTime: newCloseTime
-                            });
-
-                            await db.update(enquiries)
-                                .set({
-                                    bidCloseTime: newCloseTime,
-                                    extensionCount: newCount
-                                })
-                                .where(eq(enquiries.enquiryKey, enquiryKey));
-                        }
-                    } catch (dbError: any) {
-                        console.error(`[BIDDING ${enquiryKey}] DB Error recording extension:`, dbError.message);
-                    }
-
-                    monitor.lastKnownCloseTime = newCloseTime;
-                } else if (!monitor.lastKnownCloseTime) {
-                    monitor.lastKnownCloseTime = newCloseTime;
-                }
+                return;
             }
 
-            // Logic to decide if we need to bid would go here, using strategy.submitBid()
-            // For now, just logging
+            // Check for extension and handle reset
+            const extensionDetected = await this.detectAndHandleExtension(enquiryKey, monitor, data);
+
+            // Adjust polling interval based on time remaining
+            this.adjustPollingInterval(enquiryKey, monitor, data.bidClosingIn);
+
+            // Update DB with latest stats
+            await this.updateMonitorStatus(enquiryKey, monitor);
+
+            // Execute bidding logic if conditions are met
+            await this.executeBiddingLogic(enquiryKey, monitor, data, authToken, strategy);
 
         } catch (error: any) {
             console.error(`[BIDDING ${enquiryKey}] Error:`, error.message);
+        }
+    }
+
+    /**
+     * Detect bid extension and reset bid counter if extension is found
+     */
+    private async detectAndHandleExtension(enquiryKey: string, monitor: BidMonitorState, data: any): Promise<boolean> {
+        if (!data.bidCloseTime) return false;
+
+        const newCloseTime = new Date(data.bidCloseTime);
+
+        // Check if this is an extension (> 1 min difference)
+        if (monitor.lastKnownCloseTime && newCloseTime.getTime() > monitor.lastKnownCloseTime.getTime() + 60000) {
+            logBid(enquiryKey, `🔄 EXTENSION DETECTED! ${monitor.lastKnownCloseTime.toISOString()} -> ${newCloseTime.toISOString()}`);
+
+            // Reset bid counter for new extension round
+            const previousBidsSubmitted = monitor.bidsSubmitted;
+            monitor.bidsSubmitted = 0;
+
+            logBid(enquiryKey, `Reset bid counter from ${previousBidsSubmitted} to 0. Ready for 3 new bids.`);
+
+            // Record extension in database
+            await this.recordExtension(enquiryKey, monitor.lastKnownCloseTime, newCloseTime);
+
+            monitor.lastKnownCloseTime = newCloseTime;
+            return true;
+        } else if (!monitor.lastKnownCloseTime) {
+            monitor.lastKnownCloseTime = newCloseTime;
+        }
+
+        return false;
+    }
+
+    /**
+     * Record bid extension in database
+     */
+    private async recordExtension(enquiryKey: string, previousCloseTime: Date, newCloseTime: Date): Promise<void> {
+        try {
+            const storedEnquiry = await db.select().from(enquiries).where(eq(enquiries.enquiryKey, enquiryKey)).limit(1);
+
+            if (storedEnquiry.length > 0) {
+                const newCount = (storedEnquiry[0].extensionCount || 0) + 1;
+
+                await db.insert(enquiryExtensions).values({
+                    enquiryId: storedEnquiry[0].id,
+                    extensionNumber: newCount,
+                    previousBidCloseTime: previousCloseTime,
+                    newBidCloseTime: newCloseTime
+                });
+
+                await db.update(enquiries)
+                    .set({
+                        bidCloseTime: newCloseTime,
+                        extensionCount: newCount
+                    })
+                    .where(eq(enquiries.enquiryKey, enquiryKey));
+            }
+        } catch (dbError: any) {
+            console.error(`[BIDDING ${enquiryKey}] DB Error recording extension:`, dbError.message);
+        }
+    }
+
+    /**
+     * Adjust polling interval based on time remaining
+     * - > 60s: Check every 30 seconds
+     * - 10-60s: Check every 5 seconds
+     * - <= 10s: Check every 1 second
+     */
+    private adjustPollingInterval(enquiryKey: string, monitor: BidMonitorState, timeRemaining: number): void {
+        let newInterval: number;
+
+        if (timeRemaining <= 10) {
+            newInterval = 1000; // 1 second
+        } else if (timeRemaining <= 60) {
+            newInterval = 5000; // 5 seconds
+        } else {
+            newInterval = 30000; // 30 seconds
+        }
+
+        // Only restart interval if it changed
+        if (monitor.currentPollingInterval !== newInterval && monitor.intervalId) {
+            clearInterval(monitor.intervalId);
+            monitor.intervalId = setInterval(() => this.checkAndBid(enquiryKey, monitor.bids.authToken || ''), newInterval);
+            monitor.currentPollingInterval = newInterval; // Update tracked interval
+            logBid(enquiryKey, `Adjusted polling interval to ${newInterval}ms`);
+        }
+    }
+
+    /**
+     * Update monitor status in database
+     */
+    private async updateMonitorStatus(enquiryKey: string, monitor: BidMonitorState): Promise<void> {
+        await db.update(bidMonitors)
+            .set({
+                data: {
+                    ...monitor.bids,
+                    strategy: monitor.strategyName,
+                    userFullName: monitor.userFullName,
+                    bidsSubmitted: monitor.bidsSubmitted,
+                    currentRank: monitor.currentRank,
+                    timeRemaining: monitor.timeRemaining
+                },
+                updatedAt: new Date()
+            })
+            .where(eq(bidMonitors.enquiryKey, enquiryKey));
+    }
+
+    /**
+     * Execute bidding logic based on current state
+     * Rules:
+     * 1. Only bid when time remaining <= 10 seconds
+     * 2. Only bid if not rank #1
+     * 3. Maximum 3 bids per round (resets on extension)
+     * 4. Submit bids in order: bid1, bid2, bid3
+     */
+    private async executeBiddingLogic(
+        enquiryKey: string,
+        monitor: BidMonitorState,
+        data: any,
+        authToken: string,
+        strategy: IBiddingStrategy
+    ): Promise<void> {
+        // Rule 1: Only bid in the last 10 seconds
+        if (data.bidClosingIn > 10) {
+            return;
+        }
+
+        // Rule 2: Don't bid if already rank #1
+        if (monitor.currentRank === 1) {
+            logBid(enquiryKey, '✅ Already rank #1, no bid needed');
+            return;
+        }
+
+        // Rule 3: Check if we have bids remaining
+        if (monitor.bidsSubmitted >= 3) {
+            logBid(enquiryKey, '⚠️ All 3 bids exhausted for this round');
+            return;
+        }
+
+        // Determine which bid to submit
+        const bidNumber = monitor.bidsSubmitted + 1;
+        const bidAmount = this.getBidAmount(monitor.bids, bidNumber);
+
+        if (!bidAmount) {
+            logBid(enquiryKey, `⚠️ No bid${bidNumber} configured`);
+            return;
+        }
+
+        // Submit the bid
+        const success = await this.submitBid(enquiryKey, monitor, bidAmount, bidNumber, authToken, strategy);
+
+        if (success) {
+            monitor.bidsSubmitted++;
+            logBid(enquiryKey, `✅ Bid ${bidNumber} submitted successfully: ₹${bidAmount}`);
+        }
+    }
+
+    /**
+     * Get bid amount based on bid number
+     */
+    private getBidAmount(bids: any, bidNumber: number): number | null {
+        switch (bidNumber) {
+            case 1:
+                return bids.bid1 || null;
+            case 2:
+                return bids.bid2 || null;
+            case 3:
+                return bids.bid3 || null;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Submit a bid using the strategy
+     */
+    private async submitBid(
+        enquiryKey: string,
+        monitor: BidMonitorState,
+        amount: number,
+        bidNumber: number,
+        authToken: string,
+        strategy: IBiddingStrategy
+    ): Promise<boolean> {
+        try {
+            logBid(enquiryKey, `📤 Submitting bid ${bidNumber}: ₹${amount}...`);
+
+            // Get quote details needed for submission
+            const quoteDetails = await strategy.getQuoteDetails(enquiryKey, authToken);
+
+            if (!quoteDetails || !quoteDetails.id) {
+                logBid(enquiryKey, '❌ Failed to get quote details');
+                return false;
+            }
+
+            // Submit the bid
+            const success = await strategy.submitBid(quoteDetails.id, amount, authToken);
+
+            if (success) {
+                logBid(enquiryKey, `✅ Bid ${bidNumber} submitted: ₹${amount}`);
+
+                // Update monitor state
+                await this.updateMonitorStatus(enquiryKey, monitor);
+            } else {
+                logBid(enquiryKey, `❌ Bid ${bidNumber} submission failed`);
+            }
+
+            return success;
+
+        } catch (error: any) {
+            logBid(enquiryKey, `❌ Error submitting bid ${bidNumber}: ${error.message}`);
+            return false;
         }
     }
 }

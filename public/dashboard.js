@@ -989,7 +989,9 @@ function updateBiddingUI(enquiryNumber, status, isActive) {
         }
 
         // Update bid values if available
+        console.log('[BID UPDATE] Status:', status);
         if (status.bids) {
+            console.log('[BID UPDATE] Updating bids for enquiry:', enquiryNumber);
             const highInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="high"]`);
             const mediumInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="medium"]`);
             const lowInput = document.querySelector(`input[data-enquiry="${enquiryNumber}"][data-type="low"]`);
@@ -1467,3 +1469,60 @@ setTimeout(() => {
     console.log('[INIT] Starting global status polling...');
     startGlobalStatusPolling();
 }, 2000);
+// History Modal Functions
+window.showHistoryModal = function (enquiryNumber) {
+    const modal = document.getElementById('historyModal');
+    const historyList = document.getElementById('historyList');
+    if (!modal || !historyList) return;
+
+    // Clear previous history
+    historyList.innerHTML = '<div class="loading">Loading history...</div>';
+
+    // Show modal
+    modal.style.display = 'block';
+    // Add active class for animation/styling if needed
+    setTimeout(() => modal.classList.add('active'), 10);
+
+    // Fetch history
+    fetch(`/api/bid-history/${enquiryNumber}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.length > 0) {
+                historyList.innerHTML = data.map(item => `
+                    <div class="history-item">
+                        <div class="history-header">
+                            <span class="history-time">${new Date(item.timestamp).toLocaleString()}</span>
+                            <span class="extension-count">Ext: ${item.extension_count || 0}</span>
+                        </div>
+                        <div class="history-details">
+                            ${item.details || 'Bid extended due to new offer'}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                historyList.innerHTML = '<div class="no-data">No history available</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching history:', error);
+            historyList.innerHTML = '<div class="error">Failed to load history</div>';
+        });
+};
+
+window.closeHistoryModal = function () {
+    const modal = document.getElementById('historyModal');
+    if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300); // Wait for animation
+    }
+};
+
+// Close modal when clicking outside
+window.onclick = function (event) {
+    const modal = document.getElementById('historyModal');
+    if (event.target == modal) {
+        closeHistoryModal();
+    }
+};

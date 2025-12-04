@@ -1,18 +1,92 @@
 import { Request, Response } from 'express';
 import { biddingEngine } from '../services/biddingEngine';
+import { whatsappService } from '../services/whatsappService';
 
 export const startBidding = async (req: Request, res: Response) => {
-    const { enquiryKey, bids } = req.body;
+    const { enquiryKey, enquiryNumber, closingTimestamp, bids } = req.body;
+    const sessionId = req.sessionID;
     const user = (req.session as any).user;
 
-    console.log(`[BidController] Request to start bidding for ${enquiryKey} by ${user?.username}`);
+    console.log(`[START-BIDDING] Request to start bidding for ${enquiryKey} by ${user?.username}`);
 
     try {
-        await biddingEngine.startBidding(enquiryKey, bids, user);
-        console.log(`[BidController] Bidding started successfully for ${enquiryKey}`);
-        res.json({ success: true, message: 'Bidding started' });
+        // Get global auth token from config
+        const configResult = await db.select().from(systemConfig).limit(1);
+        const authToken = configResult[0]?.globalAuthToken;
+
+        if (!authToken) {
+            return res.status(401).json({ error: 'GoComet authentication required', needsAuth: true });
+        }
+
+        // Validate bid structure based on type
+        if (bids.cargo && Array.isArray(bids.cargo)) {
+            // Multi-cargo validation
+            for (const cargo of bids.cargo) {
+                if (!cargo.high || !cargo.medium || !cargo.low) {
+                    return res.status(400).json({
+                        error: 'All three bid values (high, medium, low) are required for each cargo type'
+                    });
+                }
+            }
+        } else {
+            // Single cargo validation
+            if (!bids.high || !bids.medium || !bids.low) {
+                return res.status(400).json({
+                    error: 'All three bid values (high, medium, low) are required'
+                });
+            }
+        }
+
+        // CRITICAL: Check if monitor already exists FIRST
+        const existingMonitor = biddingEngine.getStatus(enquiryKey);
+        if (existingMonitor && existingMonitor.status === 'active') {
+            console.log(`[START-BIDDING] Monitor already exists for ${enquiryKey}, rejecting new request`);
+            return res.status(409).json({
+                error: 'Smart bidding already active for this enquiry',
+                startedBy: existingMonitor.userFullName || existingMonitor.startedBy
+            });
+        }
+
+        console.log(`[START-BIDDING] No existing monitor for ${enquiryKey}, proceeding to create new one`);
+
+        // Start the bidding monitor
+        await biddingEngine.startBidding(enquiryKey, bids, user, {
+            enquiryNumber,
+            closingTimestamp,
+            sessionId
+        });
+
+        console.log(`[START-BIDDING] Started new monitor for ${enquiryKey} by ${user?.username}`);
+
+        // Send WhatsApp new bid notification asynchronously (don't block API response)
+        setImmediate(async () => {
+            try {
+                // Create a simplified enquiry object for WhatsApp notification
+                const enquiryForWhatsApp = {
+                    enquiry_number: enquiryKey,
+                    origin: enquiryNumber?.split(' to ')[0] || 'Unknown origin',
+                    destination: enquiryNumber?.split(' to ')[1] || 'Unknown destination',
+                    created_at: new Date().toISOString(),
+                    closing_time: closingTimestamp,
+                    cargo_quantity: ['Container'], // Default for now
+                    unit_details: { totalUnits: 1 }
+                };
+
+                const whatsappResult = await whatsappService.sendNewBidNotification(enquiryForWhatsApp);
+                if (whatsappResult.success) {
+                    console.log(`[WHATSAPP] New bid notification sent for ${enquiryKey}`);
+                } else {
+                    console.log(`[WHATSAPP] Failed to send new bid notification for ${enquiryKey}: ${whatsappResult.reason}`);
+                }
+            } catch (error) {
+                console.error(`[WHATSAPP] Error sending new bid notification for ${enquiryKey}:`, error);
+            }
+        });
+
+        res.json({ success: true, message: 'Smart bidding monitor started' });
+
     } catch (error: any) {
-        console.error(`[BidController] Failed to start bidding for ${enquiryKey}:`, error.message);
+        console.error(`[START-BIDDING] Failed to start bidding for ${enquiryKey}:`, error.message);
         res.status(400).json({ error: error.message });
     }
 };
@@ -53,7 +127,7 @@ export const getBiddingStatus = async (req: Request, res: Response) => {
             timeRemaining: memoryStatus.timeRemaining,
             startedBy: memoryStatus.startedBy || 'unknown',
             userFullName: memoryStatus.userFullName || 'Unknown',
-            bids: memoryStatus.config?.bids || {}
+            bids: memoryStatus?.bids || {}
         });
     }
 

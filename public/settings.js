@@ -31,11 +31,11 @@ async function loadUsers() {
                 <div class="user-item" data-username="${user.username}">
                     <div class="user-info">
                         <strong>${user.name}</strong> (${user.username})
-                        ${user.isAdmin ? '<span class="admin-badge">Admin</span>' : ''}
+                        <span class="role-badge ${user.role || (user.isAdmin ? 'admin' : 'analyst')}">${(user.role || (user.isAdmin ? 'admin' : 'analyst')).toUpperCase()}</span>
                     </div>
                     <div class="user-actions">
                         <button class="btn btn-small" onclick="changeUserPassword('${user.username}')">Change Password</button>
-                        ${!user.isAdmin ? `<button class="btn btn-small btn-danger" onclick="removeUser('${user.username}')">Remove</button>` : ''}
+                        ${!user.isAdmin && user.role !== 'admin' ? `<button class="btn btn-small btn-danger" onclick="removeUser('${user.username}')">Remove</button>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -53,7 +53,8 @@ async function addUser() {
     const username = document.getElementById('newUsername').value.trim();
     const name = document.getElementById('newName').value.trim();
     const password = document.getElementById('newPassword').value;
-    const isAdmin = document.getElementById('newIsAdmin').checked;
+    const role = document.getElementById('newRole').value;
+    const isAdmin = role === 'admin';
 
     if (!username || !name || !password) {
         alert('Please fill all fields');
@@ -66,7 +67,7 @@ async function addUser() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, name, password, isAdmin })
+            body: JSON.stringify({ username, name, password, role, isAdmin })
         });
 
         if (response.ok) {
@@ -660,7 +661,7 @@ function closeAddUserModal() {
     document.getElementById('newUsername').value = '';
     document.getElementById('newName').value = '';
     document.getElementById('newPassword').value = '';
-    document.getElementById('newIsAdmin').checked = false;
+    document.getElementById('newRole').value = 'analyst';
 }
 
 // Close modals when clicking outside

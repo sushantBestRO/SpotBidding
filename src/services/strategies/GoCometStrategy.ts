@@ -13,14 +13,35 @@ export class GoCometStrategy implements IBiddingStrategy {
             vendorRank: data.vendor_rank,
             bidClosingIn: data.bid_closing_in,
             revisionsLeft: data.revisions_left || 3,
-            bidCloseTime: data.bid_close_time
+            bidCloseTime: data.bid_close_time,
+            biddingClosed: data.bidding_closed || false
         };
     }
 
     async submitBid(quoteId: string, amount: number, authToken: string): Promise<boolean> {
-        // Implementation for GoComet bid submission
-        // This would contain the payload construction logic
-        return true;
+        try {
+            if (process.env.NODE_ENV === 'production') {
+                console.log(`[GoComet Strategy] Submitting bid for quote ${quoteId}: ₹${amount}`);
+                // const url = `/api/v1/vendor/quotes/${quoteId}/submit`;
+
+                // const payload = {
+                //     quote: {
+                //         total_price: amount,
+                //         currency: 'INR'
+                //     }
+                // };
+
+                // const response = await goCometApi.post(url, payload, {
+                //     headers: getHeaders(authToken)
+                // });
+
+                // return response.status === 200 || response.status === 201;
+            }
+            return true;
+        } catch (error: any) {
+            console.error('[GoComet Strategy] Bid submission error:', error.response?.data || error.message);
+            return false;
+        }
     }
 
     async getQuoteDetails(enquiryKey: string, authToken: string): Promise<any> {

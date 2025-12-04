@@ -3,6 +3,7 @@ export interface BiddingData {
     bidClosingIn: number;
     revisionsLeft: number;
     bidCloseTime?: string; // ISO string
+    biddingClosed?: boolean; // Whether bidding has been closed
 }
 
 export interface IBiddingStrategy {
