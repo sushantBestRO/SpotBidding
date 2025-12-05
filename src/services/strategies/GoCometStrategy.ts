@@ -1,5 +1,6 @@
 import { IBiddingStrategy, BiddingData } from './IBiddingStrategy';
 import { goCometApi, getHeaders } from '../goCometService';
+import { parseISTDate } from '../../utils/utils';
 
 export class GoCometStrategy implements IBiddingStrategy {
     name = 'GoComet';
@@ -9,11 +10,14 @@ export class GoCometStrategy implements IBiddingStrategy {
         const response = await goCometApi.get(url, { headers: getHeaders(authToken) });
         const data = response.data;
 
+        // Parse the bid_close_time properly (it comes in DD/MM/YYYY HH:mm format)
+        const parsedCloseTime = parseISTDate(data.bid_close_time);
+
         return {
             vendorRank: data.vendor_rank,
             bidClosingIn: data.bid_closing_in,
             revisionsLeft: data.revisions_left || 3,
-            bidCloseTime: data.bid_close_time,
+            bidCloseTime: parsedCloseTime ? parsedCloseTime.toISOString() : data.bid_close_time,
             biddingClosed: data.bidding_closed || false
         };
     }

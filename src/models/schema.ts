@@ -89,10 +89,12 @@ export const enquiries = pgTable('enquiries', {
     bidMediumAmount: numeric('bid_medium_amount'),
     bidLowAmount: numeric('bid_low_amount'),
     extensionCount: integer('extension_count').default(0),
+    bidSubmitCount: integer('bid_submit_count').default(0),
     biddingStatus: text('bidding_status'), // 'active', 'stopped', or null
     data: jsonb('data'),
     marketRates: jsonb('market_rates'),
     currentBid: jsonb('current_bid'),
+    extensionBids: jsonb('extension_bids'), // Stores bids for each extension: { 0: {high, medium, low}, 1: {...}, ... }
     createdAt: timestamp('created_at', { withTimezone: true }),
     createdBy: text('created_by'),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),

@@ -5,6 +5,14 @@ import session from 'express-session';
 import pgSession from 'connect-pg-simple';
 import { pool } from '../db'; // We'll move db.ts later, for now import from root
 import path from 'path';
+import authRoutes from './routes/authRoutes';
+import quoteRoutes from './routes/quoteRoutes';
+import bidRoutes from './routes/bidRoutes';
+import configRoutes from './routes/configRoutes';
+import bidLogsRoutes from './routes/bidLogsRoutes';
+import swaggerUi from 'swagger-ui-express';
+import { specs } from './config/swagger';
+import viewRoutes from './routes/viewRoutes';
 
 const app = express();
 
@@ -66,15 +74,6 @@ app.use(session({
     },
     proxy: isHttps // Trust proxy if using HTTPS
 }));
-
-import authRoutes from './routes/authRoutes';
-import quoteRoutes from './routes/quoteRoutes';
-import bidRoutes from './routes/bidRoutes';
-import configRoutes from './routes/configRoutes';
-import bidLogsRoutes from './routes/bidLogsRoutes';
-import swaggerUi from 'swagger-ui-express';
-import { specs } from './config/swagger';
-import viewRoutes from './routes/viewRoutes';
 
 // Swagger
 if (config.nodeEnv !== 'production') {

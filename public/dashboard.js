@@ -678,6 +678,7 @@ function startBiddingMonitor(enquiryNumber) {
                 const statusClass = data.status === 'active_bidding' ? 'active' :
                     data.status === 'closed' ? 'closed' : 'monitoring';
 
+                if(monitorDiv == null) return;
                 monitorDiv.innerHTML = `
                     <div class="monitor-status ${statusClass}">
                         <div>Status: <strong>${data.status}</strong></div>

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { db } from '../config/db';
 import { enquiries as enquiriesTable, enquiryExtensions } from '../models/schema';
-import { and, desc, eq, gte, lte, ne, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, lte, ne, sql } from 'drizzle-orm';
 import { processQuotes } from '../services/enquiryService';
 
 export const getQuotes = async (req: Request, res: Response) => {
@@ -43,7 +43,8 @@ export const getQuotes = async (req: Request, res: Response) => {
 
         const allEnquiries = await db.select()
             .from(enquiriesTable)
-            .where(eq(enquiriesTable.status, targetStatus));
+            .where(eq(enquiriesTable.status, targetStatus))
+            .orderBy(asc(enquiriesTable.bidCloseTimestamp));
 
         console.log(`[QuoteController] Total ${targetStatus} enquiries from DB:`, allEnquiries.length);
 

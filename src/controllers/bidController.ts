@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 import { biddingEngine } from '../services/biddingEngine';
 import { whatsappService } from '../services/whatsappService';
+import { db } from '../config/db';
+import { bidMonitors, enquiries, systemConfig } from '../models/schema';
+import { eq } from 'drizzle-orm';
+import { goCometApi, getHeaders } from '../services/goCometService';
+import logger from '../../logger';
 
 export const startBidding = async (req: Request, res: Response) => {
     const { enquiryKey, enquiryNumber, closingTimestamp, bids } = req.body;
@@ -107,24 +112,41 @@ export const stopBidding = async (req: Request, res: Response) => {
     }
 };
 
-import { db } from '../config/db';
-import { bidMonitors, enquiries, systemConfig } from '../models/schema';
-import { eq } from 'drizzle-orm';
-import { goCometApi, getHeaders } from '../services/goCometService';
-import logger from '../../logger';
-
 export const getBiddingStatus = async (req: Request, res: Response) => {
     const { enquiryKey } = req.params;
 
     // 1. Check in-memory engine first (most up-to-date for active bidding)
     const memoryStatus = biddingEngine.getStatus(enquiryKey);
     if (memoryStatus) {
+        // Calculate real-time remaining seconds
+        let realTimeRemaining = memoryStatus.timeRemaining;
+
+        if (memoryStatus.lastKnownCloseTime) {
+            console.log(`[getBiddingStatus] ${enquiryKey} - Raw lastKnownCloseTime:`, memoryStatus.lastKnownCloseTime);
+            console.log(`[getBiddingStatus] ${enquiryKey} - Type:`, typeof memoryStatus.lastKnownCloseTime);
+
+            const now = new Date();
+            const closeTime = new Date(memoryStatus.lastKnownCloseTime);
+
+            console.log(`[getBiddingStatus] ${enquiryKey} - Parsed closeTime:`, closeTime.toISOString());
+            console.log(`[getBiddingStatus] ${enquiryKey} - Now:`, now.toISOString());
+
+            realTimeRemaining = Math.max(0, Math.floor((closeTime.getTime() - now.getTime()) / 1000));
+        }
+
+        console.log(`[getBiddingStatus] ${enquiryKey}:`, {
+            timeRemaining: memoryStatus.timeRemaining,
+            lastKnownCloseTime: memoryStatus.lastKnownCloseTime,
+            bidsSubmitted: memoryStatus.bidsSubmitted,
+            realTimeRemaining: realTimeRemaining
+        });
+
         return res.json({
             active: true,
             status: memoryStatus.status,
             currentRank: memoryStatus.currentRank,
             bidsSubmitted: memoryStatus.bidsSubmitted,
-            timeRemaining: memoryStatus.timeRemaining,
+            timeRemaining: realTimeRemaining, // Real-time calculated value
             startedBy: memoryStatus.startedBy || 'unknown',
             userFullName: memoryStatus.userFullName || 'Unknown',
             bids: memoryStatus?.bids || {}
@@ -170,7 +192,24 @@ export const getBiddingStatus = async (req: Request, res: Response) => {
 
 export const getAllBiddingStatuses = (req: Request, res: Response) => {
     const statuses = biddingEngine.getAllStatuses();
-    res.json({ statuses });
+
+    // Serialize the statuses to avoid circular reference issues with Timeout objects
+    const serializedStatuses = statuses.map(monitor => ({
+        enquiryKey: monitor.enquiryKey,
+        status: monitor.status,
+        currentRank: monitor.currentRank,
+        bidsSubmitted: monitor.bidsSubmitted,
+        timeRemaining: monitor.timeRemaining,
+        startedBy: monitor.startedBy,
+        userFullName: monitor.userFullName,
+        bids: monitor.bids,
+        strategyName: monitor.strategyName,
+        currentPollingInterval: monitor.currentPollingInterval,
+        lastKnownCloseTime: monitor.lastKnownCloseTime?.toISOString() || null
+        // Note: intervalId is excluded as it contains circular references
+    }));
+
+    res.json({ statuses: serializedStatuses });
 };
 
 export const submitBid = async (req: Request, res: Response) => {
