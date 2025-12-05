@@ -13,14 +13,42 @@ app.set('etag', false);
 
 // Middleware
 app.use(cors({
-    origin: config.clientUrl,
-    credentials: true
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps, curl, postman)
+        if (!origin) return callback(null, true);
+
+        // Allow configured origins
+        const allowedOrigins = Array.isArray(config.clientUrl) ? config.clientUrl : [config.clientUrl];
+
+        // Also allow localhost with any port for development
+        if (config.nodeEnv !== 'production') {
+            const localhostRegex = /^https?:\/\/localhost(:\d+)?$/;
+            if (localhostRegex.test(origin)) {
+                return callback(null, true);
+            }
+        }
+
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.warn(`CORS: Blocked origin: ${origin}`);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    exposedHeaders: ['Set-Cookie']
 }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public'))); // Adjust path as needed
 
 // Session
 const PgSessionStore = pgSession(session);
+
+// Determine if we're using HTTPS
+const isHttps = config.nodeEnv === 'production' || process.env.USE_HTTPS === 'true';
+
 app.use(session({
     store: new PgSessionStore({
         pool: pool,
@@ -30,9 +58,13 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: config.nodeEnv === 'production', // Set to false to allow HTTP in production
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
-    }
+        secure: isHttps, // true for HTTPS, false for HTTP
+        httpOnly: true, // Prevent client-side JS from accessing the cookie
+        sameSite: isHttps ? 'none' : 'lax', // 'none' for HTTPS cross-origin, 'lax' for HTTP
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        domain: config.nodeEnv === 'production' ? undefined : undefined // Let browser handle domain
+    },
+    proxy: isHttps // Trust proxy if using HTTPS
 }));
 
 import authRoutes from './routes/authRoutes';

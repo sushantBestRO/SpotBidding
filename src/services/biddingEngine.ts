@@ -549,7 +549,7 @@ class BiddingEngine {
 
             if (!quoteDetails || !quoteDetails.id) {
                 errorMessage = 'Failed to get quote details';
-                logBid(enquiryKey, `❌ ${errorMessage}`);
+                logBid(enquiryKey, `${errorMessage}`);
                 return false;
             }
 
@@ -560,13 +560,13 @@ class BiddingEngine {
             const responseTime = Date.now() - startTime;
 
             if (success) {
-                logBid(enquiryKey, `✅ Bid ${bidNumber} submitted: ₹${amount} (${responseTime}ms)`);
+                logBid(enquiryKey, `Bid ${bidNumber} submitted: ₹${amount} (${responseTime}ms)`);
 
                 // Update monitor state
                 await this.updateMonitorStatus(enquiryKey, monitor);
             } else {
                 errorMessage = 'Bid submission failed (API returned false)';
-                logBid(enquiryKey, `❌ Bid ${bidNumber} submission failed`);
+                logBid(enquiryKey, `Bid ${bidNumber} submission failed`);
             }
 
             // Log to database
@@ -586,7 +586,7 @@ class BiddingEngine {
         } catch (error: any) {
             const responseTime = Date.now() - startTime;
             errorMessage = error.message || 'Unknown error';
-            logBid(enquiryKey, `❌ Error submitting bid ${bidNumber}: ${errorMessage}`);
+            logBid(enquiryKey, `Error submitting bid ${bidNumber}: ${errorMessage}`);
 
             // Log failed submission to database
             await this.logBidSubmission(
