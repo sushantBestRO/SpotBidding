@@ -1,5 +1,5 @@
 import { db } from '../config/db';
-import { bidMonitors, systemConfig, enquiries, enquiryExtensions } from '../models/schema';
+import { bidMonitors, systemConfig, enquiries, enquiryExtensions, bidSubmissionLogs } from '../models/schema';
 import { eq } from 'drizzle-orm';
 import { IBiddingStrategy } from './strategies/IBiddingStrategy';
 import { GoCometStrategy } from './strategies/GoCometStrategy';
@@ -536,6 +536,11 @@ class BiddingEngine {
         authToken: string,
         strategy: IBiddingStrategy
     ): Promise<boolean> {
+        const startTime = Date.now();
+        let success = false;
+        let errorMessage: string | null = null;
+        let quoteId: string | null = null;
+
         try {
             logBid(enquiryKey, `📤 Submitting bid ${bidNumber}: ₹${amount}...`);
 
@@ -543,27 +548,111 @@ class BiddingEngine {
             const quoteDetails = await strategy.getQuoteDetails(enquiryKey, authToken);
 
             if (!quoteDetails || !quoteDetails.id) {
-                logBid(enquiryKey, '❌ Failed to get quote details');
+                errorMessage = 'Failed to get quote details';
+                logBid(enquiryKey, `❌ ${errorMessage}`);
                 return false;
             }
 
+            quoteId = quoteDetails.id;
+
             // Submit the bid
-            const success = await strategy.submitBid(quoteDetails.id, amount, authToken);
+            success = await strategy.submitBid(quoteDetails.id, amount, authToken);
+            const responseTime = Date.now() - startTime;
 
             if (success) {
-                logBid(enquiryKey, `✅ Bid ${bidNumber} submitted: ₹${amount}`);
+                logBid(enquiryKey, `✅ Bid ${bidNumber} submitted: ₹${amount} (${responseTime}ms)`);
 
                 // Update monitor state
                 await this.updateMonitorStatus(enquiryKey, monitor);
             } else {
+                errorMessage = 'Bid submission failed (API returned false)';
                 logBid(enquiryKey, `❌ Bid ${bidNumber} submission failed`);
             }
+
+            // Log to database
+            await this.logBidSubmission(
+                enquiryKey,
+                monitor,
+                bidNumber,
+                amount,
+                quoteId,
+                success,
+                errorMessage,
+                responseTime
+            );
 
             return success;
 
         } catch (error: any) {
-            logBid(enquiryKey, `❌ Error submitting bid ${bidNumber}: ${error.message}`);
+            const responseTime = Date.now() - startTime;
+            errorMessage = error.message || 'Unknown error';
+            logBid(enquiryKey, `❌ Error submitting bid ${bidNumber}: ${errorMessage}`);
+
+            // Log failed submission to database
+            await this.logBidSubmission(
+                enquiryKey,
+                monitor,
+                bidNumber,
+                amount,
+                quoteId,
+                false,
+                errorMessage,
+                responseTime
+            );
+
             return false;
+        }
+    }
+
+    /**
+     * Log bid submission to database
+     */
+    private async logBidSubmission(
+        enquiryKey: string,
+        monitor: BidMonitorState,
+        bidNumber: number,
+        amount: number,
+        quoteId: string | null,
+        success: boolean,
+        errorMessage: string | null,
+        responseTimeMs: number
+    ): Promise<void> {
+        try {
+            // Get enquiry details from database
+            const enquiryRecords = await db.select()
+                .from(enquiries)
+                .where(eq(enquiries.enquiryKey, enquiryKey))
+                .limit(1);
+
+            const enquiry = enquiryRecords[0];
+            const extensionNumber = enquiry?.extensionCount || 0;
+
+            await db.insert(bidSubmissionLogs).values({
+                enquiryId: enquiry?.id || null,
+                enquiryKey: enquiryKey,
+                enquiryName: enquiry?.name || null,
+                extensionNumber: extensionNumber,
+                bidNumber: bidNumber,
+                bidAmount: amount.toString(),
+                quoteId: quoteId,
+                success: success,
+                errorMessage: errorMessage,
+                currentRank: monitor.currentRank,
+                timeRemainingSeconds: monitor.timeRemaining,
+                bidsSubmittedBefore: monitor.bidsSubmitted,
+                strategyName: monitor.strategyName,
+                submittedBy: monitor.startedBy,
+                submittedByFullName: monitor.userFullName,
+                responseTimeMs: responseTimeMs,
+                metadata: {
+                    bidCloseTime: monitor.lastKnownCloseTime?.toISOString(),
+                    pollingInterval: monitor.currentPollingInterval
+                }
+            });
+
+            logBid(enquiryKey, `📝 Bid submission logged to database`);
+        } catch (dbError: any) {
+            console.error(`[BIDDING ${enquiryKey}] Failed to log bid submission to database:`, dbError.message);
         }
     }
 }

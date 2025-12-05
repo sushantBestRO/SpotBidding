@@ -109,13 +109,167 @@ router.post('/set-email', requireAuth, setEmail);
 import * as userController from '../controllers/userController';
 import { requireAdmin } from '../middleware/auth';
 
-// ... existing imports ...
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: User management API (Admin only)
+ */
 
-// User Management Routes
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     summary: Get all users
+ *     tags: [Users]
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all users
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Admin role required
+ */
 router.get('/users', requireAdmin, userController.getUsers);
+
+/**
+ * @swagger
+ * /api/users:
+ *   post:
+ *     summary: Add a new user
+ *     tags: [Users]
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *               - name
+ *               - role
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *                 enum: [admin, manager, analyst]
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *       400:
+ *         description: Invalid request or user already exists
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Admin role required
+ */
 router.post('/users', requireAdmin, userController.addUser);
+
+/**
+ * @swagger
+ * /api/users/{username}:
+ *   delete:
+ *     summary: Delete a user
+ *     tags: [Users]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Username to delete
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       404:
+ *         description: User not found
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Admin role required
+ */
 router.delete('/users/:username', requireAdmin, userController.deleteUser);
+
+/**
+ * @swagger
+ * /api/users/{username}/password:
+ *   put:
+ *     summary: Update user password (Admin)
+ *     tags: [Users]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Username
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newPassword
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *       404:
+ *         description: User not found
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Admin role required
+ */
 router.put('/users/:username/password', requireAdmin, userController.updateUserPassword);
+
+/**
+ * @swagger
+ * /api/change-password:
+ *   post:
+ *     summary: Change own password
+ *     tags: [Auth]
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *       400:
+ *         description: Invalid current password
+ *       401:
+ *         description: Unauthorized
+ */
 router.post('/change-password', requireAuth, userController.changeOwnPassword);
 
 export default router;

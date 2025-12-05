@@ -116,8 +116,39 @@ export const enquiryExtensions = pgTable('enquiry_extensions', {
     updatedBy: text('updated_by')
 });
 
+export const bidSubmissionLogs = pgTable('bid_submission_logs', {
+    id: serial('id').primaryKey(),
+    enquiryId: uuid('enquiry_id').references(() => enquiries.id),
+    enquiryKey: text('enquiry_key').notNull(),
+    enquiryName: text('enquiry_name'), // Display name of enquiry
+    extensionNumber: integer('extension_number').default(0), // 0 for original, 1+ for extensions
+    bidNumber: integer('bid_number').notNull(), // 1, 2, or 3
+    bidAmount: numeric('bid_amount').notNull(),
+    quoteId: text('quote_id'), // GoComet quote ID
+    success: boolean('success').notNull(),
+    errorMessage: text('error_message'),
+
+    // Context at time of submission
+    currentRank: integer('current_rank'),
+    timeRemainingSeconds: integer('time_remaining_seconds'),
+    bidsSubmittedBefore: integer('bids_submitted_before'), // How many bids were already submitted in this round
+
+    // Metadata
+    strategyName: text('strategy_name').default('GoComet'),
+    submittedBy: text('submitted_by'), // Username who started the bidding
+    submittedByFullName: text('submitted_by_full_name'),
+
+    // Timing
+    submittedAt: timestamp('submitted_at', { withTimezone: true }).defaultNow(),
+    responseTimeMs: integer('response_time_ms'), // How long the API call took
+
+    // Additional data
+    metadata: jsonb('metadata') // Any additional context
+});
+
 export const session = pgTable('session', {
     sid: text('sid').primaryKey(),
     sess: jsonb('sess').notNull(),
     expire: timestamp('expire').notNull()
 });
+

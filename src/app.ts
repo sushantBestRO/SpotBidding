@@ -39,6 +39,7 @@ import authRoutes from './routes/authRoutes';
 import quoteRoutes from './routes/quoteRoutes';
 import bidRoutes from './routes/bidRoutes';
 import configRoutes from './routes/configRoutes';
+import bidLogsRoutes from './routes/bidLogsRoutes';
 import swaggerUi from 'swagger-ui-express';
 import { specs } from './config/swagger';
 import viewRoutes from './routes/viewRoutes';
@@ -53,6 +54,8 @@ app.use('/api', authRoutes);
 app.use('/api', quoteRoutes);
 app.use('/api', bidRoutes);
 app.use('/api', configRoutes);
+app.use('/api', bidLogsRoutes);
+
 
 // View Routes
 app.use('/', viewRoutes);

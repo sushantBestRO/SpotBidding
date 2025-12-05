@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getQuotes, getQuoteDetails, getClosedBids } from '../controllers/quoteController';
+import { getQuotes, getQuoteDetails, getClosedBids, getEnquiryExtensions } from '../controllers/quoteController';
 import { requireAuth } from '../middleware/auth';
 
 const router = Router();
@@ -59,6 +59,31 @@ router.get('/quotes', requireAuth, getQuotes);
  *         description: Quote not found
  */
 router.get('/quotes/:enquiryKey', requireAuth, getQuoteDetails);
+
+/**
+ * @swagger
+ * /api/enquiry/{enquiryKey}/extensions:
+ *   get:
+ *     summary: Get all extensions for an enquiry
+ *     tags: [Quotes]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: enquiryKey
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The enquiry key
+ *     responses:
+ *       200:
+ *         description: List of extensions sorted by closing date
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Enquiry not found
+ */
+router.get('/enquiry/:enquiryKey/extensions', requireAuth, getEnquiryExtensions);
 
 /**
  * @swagger

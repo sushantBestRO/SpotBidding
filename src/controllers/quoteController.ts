@@ -186,6 +186,66 @@ export const getClosedBids = async (req: Request, res: Response) => {
     }
 };
 
+/**
+ * Get all extensions for a specific enquiry, sorted by closing date
+ */
+export const getEnquiryExtensions = async (req: Request, res: Response) => {
+    try {
+        const { enquiryKey } = req.params;
+
+        console.log(`[QuoteController] Fetching extensions for enquiry: ${enquiryKey}`);
+
+        // First, get the enquiry to get its ID
+        const enquiryRecords = await db.select()
+            .from(enquiriesTable)
+            .where(eq(enquiriesTable.enquiryKey, enquiryKey))
+            .limit(1);
+
+        if (enquiryRecords.length === 0) {
+            return res.status(404).json({ error: 'Enquiry not found' });
+        }
+
+        const enquiry = enquiryRecords[0];
+
+        // Fetch all extensions for this enquiry, sorted by new bid close time
+        const extensions = await db.select()
+            .from(enquiryExtensions)
+            .where(eq(enquiryExtensions.enquiryId, enquiry.id))
+            .orderBy(enquiryExtensions.newBidCloseTime);
+
+        console.log(`[QuoteController] Found ${extensions.length} extensions for ${enquiryKey}`);
+
+        // Format the response with IST timezone
+        const formattedExtensions = extensions.map(ext => ({
+            id: ext.id,
+            extensionNumber: ext.extensionNumber,
+            previousBidCloseTime: ext.previousBidCloseTime ? ext.previousBidCloseTime.toISOString() : null,
+            newBidCloseTime: ext.newBidCloseTime ? ext.newBidCloseTime.toISOString() : null,
+            lastBidAmount: ext.lastBidAmount,
+            bidHighAmount: ext.bidHighAmount,
+            bidMediumAmount: ext.bidMediumAmount,
+            bidLowAmount: ext.bidLowAmount,
+            data: ext.data,
+            createdAt: ext.createdAt ? ext.createdAt.toISOString() : null,
+            updatedAt: ext.updatedAt ? ext.updatedAt.toISOString() : null,
+            createdBy: ext.createdBy,
+            updatedBy: ext.updatedBy
+        }));
+
+        res.json({
+            success: true,
+            enquiryKey: enquiryKey,
+            enquiryName: enquiry.name,
+            totalExtensions: extensions.length,
+            extensions: formattedExtensions
+        });
+
+    } catch (error: any) {
+        console.error('[QuoteController] Error fetching enquiry extensions:', error.message);
+        res.status(500).json({ error: 'Failed to fetch enquiry extensions' });
+    }
+};
+
 function parseFilterDateToString(dateStr: string, isEnd: boolean = false): string | null {
     if (!dateStr) return null;
     // Expecting DD/MM/YYYY
