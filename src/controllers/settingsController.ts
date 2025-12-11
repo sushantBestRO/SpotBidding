@@ -322,25 +322,43 @@ export const getPricingSettings = async (req: Request, res: Response) => {
 
 export const updatePricingSettings = async (req: Request, res: Response) => {
     try {
-        const { high, medium, low } = req.body || {};
-        const parsed = {
-            high: Number(high),
-            medium: Number(medium),
-            low: Number(low)
-        };
+        const pricingData = req.body; // This is the nested object with bid_1, bid_2, etc.
 
-        // Basic validation
-        for (const [k, v] of Object.entries(parsed)) {
-            if (!Number.isFinite(v)) return res.status(400).json({ error: `Invalid value for ${k}` });
-            if (v < 0 || v > 100) return res.status(400).json({ error: `${k} must be between 0 and 100` });
+        // Validate the structure
+        if (!pricingData || typeof pricingData !== 'object') {
+            return res.status(400).json({ error: 'Invalid pricing data format' });
         }
 
+        // Validate each bid object
+        for (const [bidKey, bidValue] of Object.entries(pricingData)) {
+            if (!bidKey.startsWith('bid_')) {
+                return res.status(400).json({ error: `Invalid bid key: ${bidKey}` });
+            }
+
+            const bid = bidValue as any;
+            if (typeof bid !== 'object' || !bid.high || !bid.medium || !bid.low) {
+                return res.status(400).json({ error: `Bid ${bidKey} must have high, medium, and low values` });
+            }
+
+            // Validate numeric values
+            const { high, medium, low } = bid;
+            if (!Number.isFinite(high) || !Number.isFinite(medium) || !Number.isFinite(low)) {
+                return res.status(400).json({ error: `Bid ${bidKey}: All values must be numbers` });
+            }
+
+            // Validate range
+            if (high < 0 || high > 100 || medium < 0 || medium > 100 || low < 0 || low > 100) {
+                return res.status(400).json({ error: `Bid ${bidKey}: All values must be between 0 and 100` });
+            }
+        }
+
+        // Save to config
         const config = await loadConfig();
-        config.pricePercents = parsed;
+        config.pricePercents = pricingData;
 
         const success = await saveConfig(config);
         if (success) {
-            console.log(`[PRICING] Updated by ${(req.session as any).user?.username}: ${JSON.stringify(parsed)}`);
+            console.log(`[PRICING] Updated by ${(req.session as any).user?.username}: ${JSON.stringify(pricingData, null, 2)}`);
             res.json({ success: true, pricePercents: config.pricePercents });
         } else {
             res.status(500).json({ error: 'Failed to save settings' });

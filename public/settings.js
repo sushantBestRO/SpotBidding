@@ -232,40 +232,120 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
 });
 
 // Load pricing settings (admin)
+// async function loadPricingSettings() {
+//     try {
+//         const res = await fetch('/api/settings/pricing');
+//         if (!res.ok) return;
+//         const data = await res.json();
+//         const p = data.pricePercents || { high: 9, medium: 7, low: 5 };
+//         document.getElementById('percentHigh').value = p.high;
+//         document.getElementById('percentMedium').value = p.medium;
+//         document.getElementById('percentLow').value = p.low;
+//     } catch (e) {
+//         console.error('Failed to load pricing settings', e);
+//     }
+// }
+
+// Load pricing settings (admin)
 async function loadPricingSettings() {
     try {
         const res = await fetch('/api/settings/pricing');
         if (!res.ok) return;
         const data = await res.json();
-        const p = data.pricePercents || { high: 9, medium: 7, low: 5 };
-        document.getElementById('percentHigh').value = p.high;
-        document.getElementById('percentMedium').value = p.medium;
-        document.getElementById('percentLow').value = p.low;
+        const pricePercents = data.pricePercents || {};
+
+        // Load data using unique IDs
+        for (let i = 1; i <= 20; i++) {
+            const bidKey = `bid_${i}`;
+            const bidData = pricePercents[bidKey] || { high: 9, medium: 7, low: 5 };
+
+            // Set values using unique IDs
+            const highInput = document.getElementById(`percentHigh_${i}`);
+            const mediumInput = document.getElementById(`percentMedium_${i}`);
+            const lowInput = document.getElementById(`percentLow_${i}`);
+
+            if (highInput) highInput.value = bidData.high || 9;
+            if (mediumInput) mediumInput.value = bidData.medium || 7;
+            if (lowInput) lowInput.value = bidData.low || 5;
+        }
+
+        console.log('Pricing settings loaded:', pricePercents);
     } catch (e) {
         console.error('Failed to load pricing settings', e);
     }
 }
 
 // Save pricing settings (admin)
+// async function savePricingSettings() {
+//     const high = Number(document.getElementById('percentHigh').value || 9);
+//     const medium = Number(document.getElementById('percentMedium').value || 7);
+//     const low = Number(document.getElementById('percentLow').value || 5);
+//     try {
+//         const res = await fetch('/api/settings/pricing', {
+//             method: 'PUT',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ high, medium, low })
+//         });
+//         if (res.ok) {
+//             alert('Pricing percentages saved');
+//         } else {
+//             const err = await res.json();
+//             alert(err.error || 'Failed to save');
+//         }
+//     } catch (e) {
+//         console.error('Failed to save pricing settings', e);
+//         alert('Failed to save');
+//     }
+// }
+
 async function savePricingSettings() {
-    const high = Number(document.getElementById('percentHigh').value || 9);
-    const medium = Number(document.getElementById('percentMedium').value || 7);
-    const low = Number(document.getElementById('percentLow').value || 5);
+    const pricingData = {};
+
+    // Collect all 20 bid sets in nested format
+    document.querySelectorAll('input.highBid').forEach((input, index) => {
+        const bidKey = `bid_${index + 1}`;
+        
+        if (!pricingData[bidKey]) {
+            pricingData[bidKey] = {};
+        }
+        pricingData[bidKey].high = Number(input.value || 9);
+    });
+
+    document.querySelectorAll('input.mediumBid').forEach((input, index) => {
+        const bidKey = `bid_${index + 1}`;
+        
+        if (!pricingData[bidKey]) {
+            pricingData[bidKey] = {};
+        }
+        pricingData[bidKey].medium = Number(input.value || 7);
+    });
+
+    document.querySelectorAll('input.lowBid').forEach((input, index) => {
+        const bidKey = `bid_${index + 1}`;
+        
+        if (!pricingData[bidKey]) {
+            pricingData[bidKey] = {};
+        }
+        pricingData[bidKey].low = Number(input.value || 5);
+    });
+
     try {
         const res = await fetch('/api/settings/pricing', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ high, medium, low })
+            body: JSON.stringify(pricingData)
         });
+
         if (res.ok) {
-            alert('Pricing percentages saved');
+            alert('Pricing percentages saved successfully!');
+            console.log('Saved data:', pricingData);
         } else {
             const err = await res.json();
             alert(err.error || 'Failed to save');
         }
     } catch (e) {
         console.error('Failed to save pricing settings', e);
-        alert('Failed to save');
+        alert('Failed to save pricing settings');
     }
 }
 
