@@ -264,9 +264,9 @@ async function loadPricingSettings() {
             const mediumInput = document.getElementById(`percentMedium_${i}`);
             const lowInput = document.getElementById(`percentLow_${i}`);
 
-            if (highInput) highInput.value = bidData.high || 9;
-            if (mediumInput) mediumInput.value = bidData.medium || 7;
-            if (lowInput) lowInput.value = bidData.low || 5;
+            if (highInput) highInput.value = bidData.high || 0;
+            if (mediumInput) mediumInput.value = bidData.medium || 0;
+            if (lowInput) lowInput.value = bidData.low || 0;
         }
 
         console.log('Pricing settings loaded:', pricePercents);
@@ -308,7 +308,7 @@ async function savePricingSettings() {
         if (!pricingData[bidKey]) {
             pricingData[bidKey] = {};
         }
-        pricingData[bidKey].high = Number(input.value || 9);
+        pricingData[bidKey].high = Number(input.value || 0);
     });
 
     document.querySelectorAll('input.mediumBid').forEach((input, index) => {
@@ -317,7 +317,7 @@ async function savePricingSettings() {
         if (!pricingData[bidKey]) {
             pricingData[bidKey] = {};
         }
-        pricingData[bidKey].medium = Number(input.value || 7);
+        pricingData[bidKey].medium = Number(input.value || 0);
     });
 
     document.querySelectorAll('input.lowBid').forEach((input, index) => {
@@ -326,7 +326,7 @@ async function savePricingSettings() {
         if (!pricingData[bidKey]) {
             pricingData[bidKey] = {};
         }
-        pricingData[bidKey].low = Number(input.value || 5);
+        pricingData[bidKey].low = Number(input.value || 0);
     });
 
     try {

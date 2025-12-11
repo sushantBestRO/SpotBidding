@@ -3024,8 +3024,8 @@ input[type="time"]::-moz-time-display {
 .pricing-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--space-xl);
-    margin-bottom: var(--space-xl);
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xs);
 }
 
 .pricing-item {
