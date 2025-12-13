@@ -446,7 +446,7 @@ class BiddingEngine {
             );
 
             // Adjust polling interval based on time remaining
-            this.adjustPollingInterval(enquiryKey, monitor, data.bidClosingIn);
+            this.adjustPollingInterval(enquiryKey, monitor, data.bidClosingIn, authToken);
 
             // Update DB with latest stats
             await this.updateMonitorStatus(enquiryKey, monitor);
@@ -734,7 +734,8 @@ class BiddingEngine {
     private adjustPollingInterval(
         enquiryKey: string,
         monitor: BidMonitorState,
-        timeRemaining: number
+        timeRemaining: number,
+        authToken: string
     ): void {
         let newInterval: number;
 
@@ -750,7 +751,7 @@ class BiddingEngine {
         if (monitor.currentPollingInterval !== newInterval && monitor.intervalId) {
             clearInterval(monitor.intervalId);
             monitor.intervalId = setInterval(
-                () => this.checkAndBid(enquiryKey, monitor.bids.authToken || ""),
+                () => this.checkAndBid(enquiryKey, authToken || ""),
                 newInterval
             );
             monitor.currentPollingInterval = newInterval; // Update tracked interval
@@ -847,11 +848,11 @@ class BiddingEngine {
     private getBidAmount(bids: any, bidNumber: number): number | null {
         switch (bidNumber) {
             case 1:
-                return bids.bid1 || null;
+                return bids.high || null;
             case 2:
-                return bids.bid2 || null;
+                return bids.medium || null;
             case 3:
-                return bids.bid3 || null;
+                return bids.low || null;
             default:
                 return null;
         }
