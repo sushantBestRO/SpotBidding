@@ -11,5 +11,6 @@ export const config = {
         'http://localhost:5173',
         'https://app.gocomet.com',
         'https://bidsspots.auto-pilot.best'  // Dev server
-    ]
+    ],
+    bidThresholdSeconds: parseInt(process.env.BID_THRESHOLD_SECONDS || '10', 10)
 };

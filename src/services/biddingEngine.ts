@@ -9,6 +9,7 @@ import {
 import { eq } from "drizzle-orm";
 import { IBiddingStrategy } from "./strategies/IBiddingStrategy";
 import { GoCometStrategy } from "./strategies/GoCometStrategy";
+import { config } from "../config";
 
 // Simple logger
 const logBid = (enquiryKey: string, message: string) => {
@@ -797,8 +798,9 @@ class BiddingEngine {
         authToken: string,
         strategy: IBiddingStrategy
     ): Promise<void> {
-        // Rule 1: Only bid in the last 10 seconds
-        if (data.bidClosingIn > 10) {
+        // Rule 1: Only bid in the last N seconds (configurable via BID_THRESHOLD_SECONDS env var)
+        const bidThreshold = config.bidThresholdSeconds || 10;
+        if (data.bidClosingIn > bidThreshold) {
             return;
         }
 
