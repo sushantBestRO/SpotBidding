@@ -88,16 +88,14 @@ async function loadLogs() {
           (log) => `
                 <div class="log-entry ${log.success ? "success" : "failed"}">
                     <div class="log-time">${new Date(
-                      log.timestamp
-                    ).toLocaleString()}</div>
+            log.timestamp
+          ).toLocaleString()}</div>
                     <div class="log-content">
                         <strong>${log.enquiryKey}</strong>: ${log.bidType} bid 
-                        ${log.success ? "SUCCESS" : "FAILED"} at ₹${
-            log.bidPrice
-          }
-                        (${log.timeToClosingSec}s before closing, rank ${
-            log.currentRank
-          }, ${log.responseTimeMs}ms)
+                        ${log.success ? "SUCCESS" : "FAILED"} at ₹${log.bidPrice
+            }
+                        (${log.timeToClosingSec}s before closing, rank ${log.currentRank
+            }, ${log.responseTimeMs}ms)
                     </div>
                 </div>
             `
@@ -116,8 +114,8 @@ async function loadLogs() {
           (log) => `
                 <div class="log-entry error">
                     <div class="log-time">${new Date(
-                      log.timestamp
-                    ).toLocaleString()}</div>
+            log.timestamp
+          ).toLocaleString()}</div>
                     <div class="log-content">
                         <strong>${log.context}</strong>: ${log.error.message}
                     </div>
@@ -266,17 +264,15 @@ async function displayQuotes(quotesData) {
                 
                 <div class="header-right">
                     <span class="rank">Rank: ${quote.rank}</span>
-                    <span class="quote-status status-${quote.status.toLowerCase()}">${
-        quote.status
-      }</span>
+                    <span class="quote-status status-${quote.status.toLowerCase()}">${quote.status
+        }</span>
                     
-                    ${
-                      quote?.extensions?.length > 0
-                        ? `
+                    ${quote?.extensions?.length > 0
+          ? `
                         <span class="bid-extension">Extensions #: ${quote.extensions.length}</span>
                     `
-                        : ""
-                    }
+          : ""
+        }
                 </div>
             </div>
             <div class="quote-details">
@@ -292,28 +288,26 @@ async function displayQuotes(quotesData) {
                     <span class="detail-label">Quantity:</span>
                     <span>${quote.cargo_quantity.join(", ")}</span>
                 </div>
-                ${
-                  quote.unit_details &&
-                  quote.unit_details.charges &&
-                  quote.unit_details.charges.length > 1
-                    ? `
+                ${quote.unit_details &&
+          quote.unit_details.charges &&
+          quote.unit_details.charges.length > 1
+          ? `
                     <div class="detail-row">
                         <span class="detail-label">Bidding Units:</span>
                         <div class="unit-details">
                             ${quote.unit_details.charges
-                              .map(
-                                (charge) =>
-                                  `<div class="unit-item">• ${charge.units} × ${charge.unitName} (${charge.type})</div>`
-                              )
-                              .join("")}
-                            <div class="unit-total">Total: ${
-                              quote.unit_details.totalUnits
-                            } units</div>
+            .map(
+              (charge) =>
+                `<div class="unit-item">• ${charge.units} × ${charge.unitName} (${charge.type})</div>`
+            )
+            .join("")}
+                            <div class="unit-total">Total: ${quote.unit_details.totalUnits
+          } units</div>
                         </div>
                     </div>
                 `
-                    : ""
-                }
+          : ""
+        }
                 <div class="detail-row">
                     <span class="detail-label">Company:</span>
                     <span>${quote.company_name}</span>
@@ -321,109 +315,100 @@ async function displayQuotes(quotesData) {
                 <div class="detail-row">
                     <span class="detail-label">Public Link:</span>
                     <span>
-                        <a href="/enquiry/${
-                          quote.enquiry_number
-                        }" target="_blank">/enquiry/${quote.enquiry_number}</a>
-                        <button class="btn btn-small" style="margin-left:8px;" onclick="openPublicEnquiry('${
-                          quote.enquiry_number
-                        }')">Open</button>
+                        <a href="/enquiry/${quote.enquiry_number
+        }" target="_blank">/enquiry/${quote.enquiry_number}</a>
+                        <button class="btn btn-small" style="margin-left:8px;" onclick="openPublicEnquiry('${quote.enquiry_number
+        }')">Open</button>
                     </span>
                 </div>
-                ${
-                  quote.closing_time
-                    ? `
+                ${quote.closing_time
+          ? `
                     <div class="detail-row">
                         <span class="detail-label">Closing Time:</span>
                         <span class="closing-time">${quote.closing_time}</span>
                     </div>
                 `
-                    : ""
-                }
-                ${
-                  quote.bidding_data && quote.bidding_data.bid_closing_in
-                    ? `
+          : ""
+        }
+                ${quote.bidding_data && quote.bidding_data.bid_closing_in
+          ? `
                     <div class="detail-row">
                         <span class="detail-label">Time Remaining:</span>
                         <span class="time-remaining">${formatTimeRemaining(
-                          quote.bidding_data.bid_closing_in
-                        )}</span>
+            quote.bidding_data.bid_closing_in
+          )}</span>
                     </div>
                 `
-                    : ""
-                }
+          : ""
+        }
             </div>
             <div class="bid-inputs">
-                ${
-                  quote.unit_details &&
-                  quote.unit_details.charges &&
-                  quote.unit_details.charges.length > 1
-                    ? `
+                ${quote.unit_details &&
+          quote.unit_details.charges &&
+          quote.unit_details.charges.length > 1
+          ? `
                     <h4>Enter Bid Amounts:</h4>
                     <div class="multi-cargo-grid">
                         ${quote.unit_details.charges
-                          .map((charge, index) => {
-                            // Debug logging to understand the data structure
-                            console.log(
-                              `[DEBUG] Processing cargo ${index}:`,
-                              charge
-                            );
-                            console.log(
-                              `[DEBUG] Quote bid amounts:`,
-                              quote.bid_amounts
-                            );
+            .map((charge, index) => {
+              // Debug logging to understand the data structure
+              console.log(
+                `[DEBUG] Processing cargo ${index}:`,
+                charge
+              );
+              console.log(
+                `[DEBUG] Quote bid amounts:`,
+                quote.bid_amounts
+              );
 
-                            // Find matching cargo data - try multiple strategies
-                            let matchedCargo = null;
-                            if (quote.bid_amounts.cargo) {
-                              console.log(
-                                `[DEBUG] Looking for cargoIndex ${index} in:`,
-                                quote.bid_amounts.cargo
-                              );
-                              // Strategy 1: Try exact cargoIndex match
-                              matchedCargo = quote.bid_amounts.cargo.find(
-                                (c) => Number(c.cargoIndex) === index
-                              );
+              // Find matching cargo data - try multiple strategies
+              let matchedCargo = null;
+              if (quote.bid_amounts.cargo) {
+                console.log(
+                  `[DEBUG] Looking for cargoIndex ${index} in:`,
+                  quote.bid_amounts.cargo
+                );
+                // Strategy 1: Try exact cargoIndex match
+                matchedCargo = quote.bid_amounts.cargo.find(
+                  (c) => Number(c.cargoIndex) === index
+                );
 
-                              // Strategy 2: If no exact match, try array index match
-                              if (
-                                !matchedCargo &&
-                                quote.bid_amounts.cargo[index]
-                              ) {
-                                console.log(
-                                  `[DEBUG] No cargoIndex match found, using array index ${index}`
-                                );
-                                matchedCargo = quote.bid_amounts.cargo[index];
-                              }
+                // Strategy 2: If no exact match, try array index match
+                if (
+                  !matchedCargo &&
+                  quote.bid_amounts.cargo[index]
+                ) {
+                  console.log(
+                    `[DEBUG] No cargoIndex match found, using array index ${index}`
+                  );
+                  matchedCargo = quote.bid_amounts.cargo[index];
+                }
 
-                              console.log(
-                                `[DEBUG] Final matched cargo:`,
-                                matchedCargo
-                              );
-                            }
-                            return `
+                console.log(
+                  `[DEBUG] Final matched cargo:`,
+                  matchedCargo
+                );
+              }
+              return `
                             <div class="cargo-card">
-                                <div class="cargo-header">${charge.type} (${
-                              charge.units
-                            }×${charge.unitName.split(" ")[0]})</div>
+                                <div class="cargo-header">${charge.type} (${charge.units
+                }×${charge.unitName.split(" ")[0]})</div>
                                 <div class="cargo-inputs">
                                     <div class="input-group market-group">
                                         <label>Market</label>
                                         <input type="number" 
                                                class="cargo-input market-input" 
                                                data-cargo-index="${index}"
-                                               data-enquiry="${
-                                                 quote.enquiry_number
-                                               }"
-                                               value="${
-                                                 matchedCargo?.marketValue || ""
-                                               }"
+                                               data-enquiry="${quote.enquiry_number
+                }"
+                                               value="${matchedCargo?.marketValue || ""
+                }"
                                                placeholder="0"
                                                onchange="calculateBidPrices(this, ${index})"
-                                               ${
-                                                 quote.bidding_active
-                                                   ? "readonly"
-                                                   : ""
-                                               }>
+                                               ${quote.bidding_active
+                  ? "readonly"
+                  : ""
+                }>
                                     </div>
                                     <div class="bid-inputs-row">
                                         <div class="input-group">
@@ -432,15 +417,13 @@ async function displayQuotes(quotesData) {
                                                    class="cargo-input bid-input" 
                                                    data-type="high" 
                                                    data-cargo-index="${index}"
-                                                   data-enquiry="${
-                                                     quote.enquiry_number
-                                                   }"
-                                                   value="${
-                                                     localBidStorage.get(
-                                                       quote.enquiry_number
-                                                     )?.cargo?.[index]?.high ||
-                                                     ""
-                                                   }"
+                                                   data-enquiry="${quote.enquiry_number
+                }"
+                                                   value="${localBidStorage.get(
+                  quote.enquiry_number
+                )?.cargo?.[index]?.high ||
+                ""
+                }"
                                                    placeholder="0">
                                         </div>
                                         <div class="input-group">
@@ -449,15 +432,13 @@ async function displayQuotes(quotesData) {
                                                    class="cargo-input bid-input" 
                                                    data-type="medium" 
                                                    data-cargo-index="${index}"
-                                                   data-enquiry="${
-                                                     quote.enquiry_number
-                                                   }"
-                                                   value="${
-                                                     localBidStorage.get(
-                                                       quote.enquiry_number
-                                                     )?.cargo?.[index]
-                                                       ?.medium || ""
-                                                   }"
+                                                   data-enquiry="${quote.enquiry_number
+                }"
+                                                   value="${localBidStorage.get(
+                  quote.enquiry_number
+                )?.cargo?.[index]
+                  ?.medium || ""
+                }"
                                                    placeholder="0">
                                         </div>
                                         <div class="input-group">
@@ -466,26 +447,24 @@ async function displayQuotes(quotesData) {
                                                    class="cargo-input bid-input" 
                                                    data-type="low" 
                                                    data-cargo-index="${index}"
-                                                   data-enquiry="${
-                                                     quote.enquiry_number
-                                                   }"
-                                                   value="${
-                                                     localBidStorage.get(
-                                                       quote.enquiry_number
-                                                     )?.cargo?.[index]?.low ||
-                                                     ""
-                                                   }"
+                                                   data-enquiry="${quote.enquiry_number
+                }"
+                                                   value="${localBidStorage.get(
+                  quote.enquiry_number
+                )?.cargo?.[index]?.low ||
+                ""
+                }"
                                                    placeholder="0">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         `;
-                          })
-                          .join("")}
+            })
+            .join("")}
                     </div>
                 `
-                    : `
+          : `
                     <h4>Enter Bid Amounts:</h4>
                     <div class="single-market-row">
                         <label>Market Rate:</label>
@@ -495,15 +474,14 @@ async function displayQuotes(quotesData) {
                                value="${quote.bid_amounts.marketValue || ""}"
                                placeholder="0"
                                onchange="calculateBidPricesSingle(this)"
-                               ${quote.bidding_active ? "readonly" : ""}> ${
-                        quote.bid_amounts.marketValue
-                          ? '<br><span style="font-size: 12px;">Added by <b>' +
-                            quote.bid_amounts.marketValueUpdatedBy +
-                            "</b> at <b>" +
-                            quote.bid_amounts.marketValueUpdatedAt +
-                            "</b></span > "
-                          : ""
-                      }
+                               ${quote.bidding_active ? "readonly" : ""}> ${quote.bid_amounts.marketValue
+            ? '<br><span style="font-size: 12px;">Added by <b>' +
+            quote.bid_amounts.marketValueUpdatedBy +
+            "</b> at <b>" +
+            quote.bid_amounts.marketValueUpdatedAt +
+            "</b></span > "
+            : ""
+          }
                     </div >
         <div class="bid-row">
             <div class="bid-input-group">
@@ -514,12 +492,11 @@ async function displayQuotes(quotesData) {
                         class="bid-input"
                         data-type="high"
                         data-enquiry="${quote.enquiry_number}"
-                        value="${
-                          (quote &&
-                            quote.bid_amounts &&
-                            quote.bid_amounts.high) ||
-                          ""
-                        }"
+                        value="${(quote &&
+            quote.bid_amounts &&
+            quote.bid_amounts.high) ||
+          ""
+          }"
                         placeholder="0.00">
                 </div>
             </div>
@@ -531,12 +508,11 @@ async function displayQuotes(quotesData) {
                         class="bid-input"
                         data-type="medium"
                         data-enquiry="${quote.enquiry_number}"
-                        value="${
-                          (quote &&
-                            quote.bid_amounts &&
-                            quote.bid_amounts.medium) ||
-                          ""
-                        }"
+                        value="${(quote &&
+            quote.bid_amounts &&
+            quote.bid_amounts.medium) ||
+          ""
+          }"
                         placeholder="0.00">
                 </div>
             </div>
@@ -548,66 +524,60 @@ async function displayQuotes(quotesData) {
                         class="bid-input"
                         data-type="low"
                         data-enquiry="${quote.enquiry_number}"
-                        value="${
-                          (quote &&
-                            quote.bid_amounts &&
-                            quote.bid_amounts.low) ||
-                          ""
-                        }"
+                        value="${(quote &&
+            quote.bid_amounts &&
+            quote.bid_amounts.low) ||
+          ""
+          }"
                         placeholder="0.00">
                 </div>
             </div>
         </div>
                 `
-                }
+        }
                 <div class="bid-controls">
                     <button class="btn btn-primary btn-small" 
-                            onclick="startSmartBidding('${
-                              quote.enquiry_number
-                            }', '${quote.closing_timestamp}')"
+                            onclick="startSmartBidding('${quote.enquiry_number
+        }', '${quote.closing_timestamp}')"
                             id="start-btn-${quote.enquiry_number}"
                             ${(() => {
-                              // Check if all required bid amounts are present
-                              if (
-                                quote.bid_amounts.cargo &&
-                                Array.isArray(quote.bid_amounts.cargo)
-                              ) {
-                                // Multi-cargo: check if all cargo types have all bid values
-                                return quote.bid_amounts.cargo.some(
-                                  (cargo) =>
-                                    !cargo.high || !cargo.medium || !cargo.low
-                                )
-                                  ? "disabled"
-                                  : "";
-                              } else {
-                                // Single cargo: check traditional bid amounts
-                                return !quote.bid_amounts.low ||
-                                  !quote.bid_amounts.medium ||
-                                  !quote.bid_amounts.high
-                                  ? "disabled"
-                                  : "";
-                              }
-                            })()}>
+          // Check if all required bid amounts are present
+          if (
+            quote.bid_amounts.cargo &&
+            Array.isArray(quote.bid_amounts.cargo)
+          ) {
+            // Multi-cargo: check if all cargo types have all bid values
+            return quote.bid_amounts.cargo.some(
+              (cargo) =>
+                !cargo.high || !cargo.medium || !cargo.low
+            )
+              ? "disabled"
+              : "";
+          } else {
+            // Single cargo: check traditional bid amounts
+            return !quote.bid_amounts.low ||
+              !quote.bid_amounts.medium ||
+              !quote.bid_amounts.high
+              ? "disabled"
+              : "";
+          }
+        })()}>
                         Start Smart Bidding
                     </button>
                     <button class="btn btn-secondary btn-small" 
-                            onclick="stopSmartBidding('${
-                              quote.enquiry_number
-                            }')"
+                            onclick="stopSmartBidding('${quote.enquiry_number
+        }')"
                             id="stop-btn-${quote.enquiry_number}"
                             style="display: none;">
                         Stop Bidding
                     </button>
                 </div>
-                <div class="bid-status" id="status-${
-                  quote.enquiry_number
-                }"></div>
-                <div class="countdown" id="countdown-${
-                  quote.enquiry_number
-                }"></div>
-                <div class="bidding-monitor" id="monitor-${
-                  quote.enquiry_number
-                }"></div>
+                <div class="bid-status" id="status-${quote.enquiry_number
+        }"></div>
+                <div class="countdown" id="countdown-${quote.enquiry_number
+        }"></div>
+                <div class="bidding-monitor" id="monitor-${quote.enquiry_number
+        }"></div>
             </div>
         </div>
     `
@@ -876,26 +846,23 @@ function startBiddingMonitor(enquiryNumber) {
           data.status === "active_bidding"
             ? "active"
             : data.status === "closed"
-            ? "closed"
-            : "monitoring";
+              ? "closed"
+              : "monitoring";
 
         if (monitorDiv == null) return;
         monitorDiv.innerHTML = `
                     <div class="monitor-status ${statusClass}">
                         <div>Status: <strong>${data.status}</strong></div>
-                        <div>Current Rank: <strong>${
-                          data.currentRank || "N/A"
-                        }</strong></div>
-                        <div>Bids Submitted: <strong>${
-                          data.bidsSubmitted
-                        }/3</strong></div>
-                        ${
-                          data.timeRemaining
-                            ? `<div>Time Remaining: <strong>${formatTimeRemaining(
-                                data.timeRemaining
-                              )}</strong></div>`
-                            : ""
-                        }
+                        <div>Current Rank: <strong>${data.currentRank || "N/A"
+          }</strong></div>
+                        <div>Bids Submitted: <strong>${data.bidsSubmitted
+          }/3</strong></div>
+                        ${data.timeRemaining
+            ? `<div>Time Remaining: <strong>${formatTimeRemaining(
+              data.timeRemaining
+            )}</strong></div>`
+            : ""
+          }
                     </div>
                 `;
 
@@ -1270,8 +1237,7 @@ function startGlobalStatusPolling() {
           // If bidding is active but we don't have a local monitor
           if (status.active && !isLocallyActive && stopBtn) {
             console.log(
-              `[GLOBAL POLL] Activating UI for ${enquiryKey} (started by ${
-                status.userFullName || status.startedBy
+              `[GLOBAL POLL] Activating UI for ${enquiryKey} (started by ${status.userFullName || status.startedBy
               })`
             );
             updateBiddingUI(enquiryKey, status, true);
@@ -1284,21 +1250,20 @@ function startGlobalStatusPolling() {
                 extraInfo += `
                                     <div style="margin-top: 8px; padding: 8px; background: #f5f5f5; border-radius: 4px; font-size: 12px;">
                                         <div>High: ₹${Math.round(
-                                          status.bids.high
-                                        ).toLocaleString()}</div>
+                  status.bids.high
+                ).toLocaleString()}</div>
                                         <div>Medium: ₹${Math.round(
-                                          status.bids.medium
-                                        ).toLocaleString()}</div>
+                  status.bids.medium
+                ).toLocaleString()}</div>
                                         <div>Low: ₹${Math.round(
-                                          status.bids.low
-                                        ).toLocaleString()}</div>
-                                        ${
-                                          status.marketValue
-                                            ? `<div style="margin-top: 4px; color: #666;">Market: ₹${Math.round(
-                                                status.marketValue
-                                              ).toLocaleString()}</div>`
-                                            : ""
-                                        }
+                  status.bids.low
+                ).toLocaleString()}</div>
+                                        ${status.marketValue
+                    ? `<div style="margin-top: 4px; color: #666;">Market: ₹${Math.round(
+                      status.marketValue
+                    ).toLocaleString()}</div>`
+                    : ""
+                  }
                                     </div>
                                 `;
               }
@@ -1321,9 +1286,8 @@ function startGlobalStatusPolling() {
                   status.bids.cargo.forEach((cargo, index) => {
                     bidDisplay += `
                                             <div style="padding: 12px; background: #f8f9fa; border-radius: 6px; border: 1px solid #e9ecef;">
-                                                <div style="font-weight: 600; color: #495057; margin-bottom: 8px;">Cargo Type ${
-                                                  index + 1
-                                                }</div>
+                                                <div style="font-weight: 600; color: #495057; margin-bottom: 8px;">Cargo Type ${index + 1
+                      }</div>
                                                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
                                                     <div style="text-align: center; padding: 8px; background: white; border-radius: 4px; border: 1px solid #e9ecef;">
                                                         <div style="font-weight: 600; color: #495057;">High</div>
@@ -1572,69 +1536,71 @@ if (document.readyState === "loading") {
   console.log("[STARTUP] DOM already loaded");
 }
 
-// Market rate auto-calculation functions
-// async function calculateBidPrices(marketRateInput, cargoIndex) {
-//   const marketRate = parseFloat(marketRateInput.value);
-//   const enquiryNumber = marketRateInput.dataset.enquiry;
-
-//   if (!marketRate || marketRate <= 0) {
-//     console.log("[CALC] Invalid market rate, clearing bid prices");
-//     clearBidPrices(enquiryNumber, cargoIndex);
-//     return;
-//   }
-
-//   // FIX: Validate that we're not using an already calculated price as market rate
-//   // If market rate seems too high (likely already calculated), warn user
-//   if (marketRate > 100000) {
-//     console.warn(
-//       `[CALC] Warning: Market rate ₹${marketRate} seems high - ensure this is the base rate, not a calculated price`
-//     );
-//   }
-
-//   try {
-//     // Fetch pricing percentages
-//     const response = await fetch("/api/public/percentages");
-//     const data = await response.json();
-//     const percentages = data.pricePercents || { high: 9, medium: 7, low: 5 };
-
-//     // Calculate bid prices
-//     const highPrice = Math.round(marketRate * (1 + percentages.high / 100));
-//     const mediumPrice = Math.round(marketRate * (1 + percentages.medium / 100));
-//     const lowPrice = Math.round(marketRate * (1 + percentages.low / 100));
-
-//     console.log(
-//       `[CALC] Cargo ${cargoIndex}: Market ₹${marketRate} -> High ₹${highPrice}, Medium ₹${mediumPrice}, Low ₹${lowPrice}`
-//     );
-
-//     // Update the corresponding bid input fields
-//     const highInput = document.querySelector(
-//       `input.cargo-input[data-cargo-index="${cargoIndex}"][data-type="high"]`
-//     );
-//     const mediumInput = document.querySelector(
-//       `input.cargo-input[data-cargo-index="${cargoIndex}"][data-type="medium"]`
-//     );
-//     const lowInput = document.querySelector(
-//       `input.cargo-input[data-cargo-index="${cargoIndex}"][data-type="low"]`
-//     );
-
-//     if (highInput) highInput.value = highPrice;
-//     if (mediumInput) mediumInput.value = mediumPrice;
-//     if (lowInput) lowInput.value = lowPrice;
-
-//     // Trigger change events to update validation
-//     [highInput, mediumInput, lowInput].forEach((input) => {
-//       if (input) input.dispatchEvent(new Event("input"));
-//     });
-
-//     // Save market rate to server for persistence
-//     await saveMarketRate(enquiryNumber, cargoIndex, marketRate);
-//   } catch (error) {
-//     console.error("[CALC] Error calculating bid prices:", error);
-//   }
-// }
+//Market rate auto - calculation functions
 async function calculateBidPrices(marketRateInput, cargoIndex) {
   const marketRate = parseFloat(marketRateInput.value);
   const enquiryNumber = marketRateInput.dataset.enquiry;
+
+  if (!marketRate || marketRate <= 0) {
+    console.log("[CALC] Invalid market rate, clearing bid prices");
+    clearBidPrices(enquiryNumber, cargoIndex);
+    return;
+  }
+
+  // FIX: Validate that we're not using an already calculated price as market rate
+  // If market rate seems too high (likely already calculated), warn user
+  if (marketRate > 100000) {
+    console.warn(
+      `[CALC] Warning: Market rate ₹${marketRate} seems high - ensure this is the base rate, not a calculated price`
+    );
+  }
+
+  try {
+    // Fetch pricing percentages
+    const response = await fetch("/api/public/percentages");
+    const data = await response.json();
+    const percentages = data.pricePercents || { high: 9, medium: 7, low: 5 };
+
+    // Calculate bid prices
+    const highPrice = Math.round(marketRate * (1 + percentages.high / 100));
+    const mediumPrice = Math.round(marketRate * (1 + percentages.medium / 100));
+    const lowPrice = Math.round(marketRate * (1 + percentages.low / 100));
+
+    console.log(
+      `[CALC] Cargo ${cargoIndex}: Market ₹${marketRate} -> High ₹${highPrice}, Medium ₹${mediumPrice}, Low ₹${lowPrice}`
+    );
+
+    // Update the corresponding bid input fields
+    const highInput = document.querySelector(
+      `input.cargo-input[data-cargo-index="${cargoIndex}"][data-type="high"]`
+    );
+    const mediumInput = document.querySelector(
+      `input.cargo-input[data-cargo-index="${cargoIndex}"][data-type="medium"]`
+    );
+    const lowInput = document.querySelector(
+      `input.cargo-input[data-cargo-index="${cargoIndex}"][data-type="low"]`
+    );
+
+    if (highInput) highInput.value = highPrice;
+    if (mediumInput) mediumInput.value = mediumPrice;
+    if (lowInput) lowInput.value = lowPrice;
+
+    // Trigger change events to update validation
+    [highInput, mediumInput, lowInput].forEach((input) => {
+      if (input) input.dispatchEvent(new Event("input"));
+    });
+
+    // Save market rate to server for persistence
+    await saveMarketRate(enquiryNumber, cargoIndex, marketRate);
+  } catch (error) {
+    console.error("[CALC] Error calculating bid prices:", error);
+  }
+}
+
+async function calculateBidPrices(marketRateInput, cargoIndex) {
+  const marketRate = parseFloat(marketRateInput.value);
+  const enquiryNumber = marketRateInput.dataset.enquiry;
+  console.log("[CALC] Market rates: ₹", marketRate);
 
   if (!marketRate || marketRate <= 0) {
     console.log("[CALC] Invalid market rate, clearing bid prices");
@@ -1696,65 +1662,66 @@ async function calculateBidPrices(marketRateInput, cargoIndex) {
 }
 
 
-// async function calculateBidPricesSingle(marketRateInput) {
-//   const marketRate = parseFloat(marketRateInput.value);
-//   const enquiryNumber = marketRateInput.dataset.enquiry;
+async function calculateBidPricesSingle(marketRateInput) {
+  const marketRate = parseFloat(marketRateInput.value);
+  console.log("[CALC] Market rate: ₹", marketRate);
+  const enquiryNumber = marketRateInput.dataset.enquiry;
 
-//   if (!marketRate || marketRate <= 0) {
-//     console.log("[CALC] Invalid market rate, clearing bid prices");
-//     clearBidPricesSingle(enquiryNumber);
-//     return;
-//   }
+  if (!marketRate || marketRate <= 0) {
+    console.log("[CALC] Invalid market rate, clearing bid prices");
+    clearBidPricesSingle(enquiryNumber);
+    return;
+  }
 
-//   // FIX: Validate that we're not using an already calculated price as market rate
-//   // If market rate seems too high (likely already calculated), warn user
-//   if (marketRate > 100000) {
-//     console.warn(
-//       `[CALC] Warning: Market rate ₹${marketRate} seems high - ensure this is the base rate, not a calculated price`
-//     );
-//   }
+  // FIX: Validate that we're not using an already calculated price as market rate
+  // If market rate seems too high (likely already calculated), warn user
+  if (marketRate > 100000) {
+    console.warn(
+      `[CALC] Warning: Market rate ₹${marketRate} seems high - ensure this is the base rate, not a calculated price`
+    );
+  }
 
-//   try {
-//     // Fetch pricing percentages
-//     const response = await fetch("/api/public/percentages");
-//     const data = await response.json();
-//     const percentages = data.pricePercents || { high: 9, medium: 7, low: 5 };
+  try {
+    // Fetch pricing percentages
+    const response = await fetch("/api/public/percentages?enquiryNumber=" + enquiryNumber);
+    const data = await response.json();
+    const percentages = data.pricePercents || { high: 9, medium: 7, low: 5 };
 
-//     // Calculate bid prices
-//     const highPrice = Math.round(marketRate * (1 + percentages.high / 100));
-//     const mediumPrice = Math.round(marketRate * (1 + percentages.medium / 100));
-//     const lowPrice = Math.round(marketRate * (1 + percentages.low / 100));
+    // Calculate bid prices
+    const highPrice = Math.round(marketRate * (1 + percentages.high / 100));
+    const mediumPrice = Math.round(marketRate * (1 + percentages.medium / 100));
+    const lowPrice = Math.round(marketRate * (1 + percentages.low / 100));
 
-//     console.log(
-//       `[CALC] Single cargo: Market ₹${marketRate} -> High ₹${highPrice}, Medium ₹${mediumPrice}, Low ₹${lowPrice}`
-//     );
+    console.log(
+      `[CALC] Single cargo: Market ₹${marketRate} -> High ₹${highPrice}, Medium ₹${mediumPrice}, Low ₹${lowPrice}`
+    );
 
-//     // Update the corresponding bid input fields
-//     const highInput = document.querySelector(
-//       `input[data-enquiry="${enquiryNumber}"][data-type="high"]`
-//     );
-//     const mediumInput = document.querySelector(
-//       `input[data-enquiry="${enquiryNumber}"][data-type="medium"]`
-//     );
-//     const lowInput = document.querySelector(
-//       `input[data-enquiry="${enquiryNumber}"][data-type="low"]`
-//     );
+    // Update the corresponding bid input fields
+    const highInput = document.querySelector(
+      `input[data-enquiry="${enquiryNumber}"][data-type="high"]`
+    );
+    const mediumInput = document.querySelector(
+      `input[data-enquiry="${enquiryNumber}"][data-type="medium"]`
+    );
+    const lowInput = document.querySelector(
+      `input[data-enquiry="${enquiryNumber}"][data-type="low"]`
+    );
 
-//     if (highInput) highInput.value = highPrice;
-//     if (mediumInput) mediumInput.value = mediumPrice;
-//     if (lowInput) lowInput.value = lowPrice;
+    if (highInput) highInput.value = highPrice;
+    if (mediumInput) mediumInput.value = mediumPrice;
+    if (lowInput) lowInput.value = lowPrice;
 
-//     // Trigger change events to update validation
-//     [highInput, mediumInput, lowInput].forEach((input) => {
-//       if (input) input.dispatchEvent(new Event("input"));
-//     });
+    // Trigger change events to update validation
+    [highInput, mediumInput, lowInput].forEach((input) => {
+      if (input) input.dispatchEvent(new Event("input"));
+    });
 
-//     // Save market rate to server for persistence
-//     await saveMarketRate(enquiryNumber, null, marketRate);
-//   } catch (error) {
-//     console.error("[CALC] Error calculating bid prices:", error);
-//   }
-// }
+    // Save market rate to server for persistence
+    await saveMarketRate(enquiryNumber, null, marketRate);
+  } catch (error) {
+    console.error("[CALC] Error calculating bid prices:", error);
+  }
+}
 
 
 
@@ -1818,8 +1785,7 @@ async function saveMarketRate(enquiryNumber, cargoIndex, marketRate) {
       );
     } else {
       console.log(
-        `[SAVE MARKET RATE] Saved market rate ₹${marketRate} for ${enquiryNumber}${
-          cargoIndex !== null ? ` cargo ${cargoIndex}` : ""
+        `[SAVE MARKET RATE] Saved market rate ₹${marketRate} for ${enquiryNumber}${cargoIndex !== null ? ` cargo ${cargoIndex}` : ""
         }`
       );
     }
@@ -1858,11 +1824,10 @@ window.showHistoryModal = function (enquiryNumber) {
                     <div class="history-item">
                         <div class="history-header">
                             <span class="history-time">${new Date(
-                              item.timestamp
-                            ).toLocaleString()}</span>
-                            <span class="extension-count">Ext: ${
-                              item.extension_count || 0
-                            }</span>
+              item.timestamp
+            ).toLocaleString()}</span>
+                            <span class="extension-count">Ext: ${item.extension_count || 0
+              }</span>
                         </div>
                         <div class="history-details">
                             ${item.details || "Bid extended due to new offer"}

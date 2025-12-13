@@ -3,6 +3,7 @@ import { loadConfig, saveConfig } from '../services/configService';
 import { emailService } from '../services/emailService';
 import { whatsappService } from '../services/whatsappService';
 import { templateManager } from '../services/templateManager';
+import { biddingEngine } from '../services/biddingEngine';
 
 // Email Config
 export const getEmailConfig = async (req: Request, res: Response) => {
@@ -312,8 +313,25 @@ export const getPredefinedTemplates = (req: Request, res: Response) => {
 export const getPricingSettings = async (req: Request, res: Response) => {
     try {
         const config = await loadConfig();
-        const pricePercents = config.pricePercents || { high: 9, medium: 7, low: 5 };
-        res.json({ pricePercents });
+        const enquiryNumber = req.query.enquiryNumber as string;
+
+        // If enquiryNumber is provided, fetch extension-specific percentages
+        if (enquiryNumber) {
+            const bidPercentages = await biddingEngine.getBidPercentagesForEnquiry(enquiryNumber);
+            res.json({
+                pricePercents: {
+                    high: bidPercentages.high,
+                    medium: bidPercentages.medium,
+                    low: bidPercentages.low
+                },
+                bidKey: bidPercentages.bidKey,
+                extensionCount: bidPercentages.extensionCount
+            });
+        } else {
+            // Return all pricing configurations
+            const pricePercents = config.pricePercents || { high: 9, medium: 7, low: 5 };
+            res.json({ pricePercents });
+        }
     } catch (error) {
         console.error('[PRICING] Error getting pricing settings:', error);
         res.status(500).json({ error: 'Failed to get pricing settings' });
