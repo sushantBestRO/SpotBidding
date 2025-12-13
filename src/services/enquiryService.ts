@@ -297,7 +297,7 @@ export const syncClosedBids = async () => {
                                     bidCloseTime: apiCloseTime,
                                     bidCloseTimestamp: parseDate(enquiry.bid_close_timestamp),
                                     biddingClosed: enquiry.bidding_closed,
-                                    biddingClosedAt: parseDate(enquiry.bidding_closed_at),
+                                    biddingClosedAt: parseISTDate(enquiry.bidding_closed_at),
                                     currentBidAmount: enquiry.current_bid_amount ? enquiry.current_bid_amount.toString() : null,
                                     data: enquiry,
                                     updatedAt: new Date()
