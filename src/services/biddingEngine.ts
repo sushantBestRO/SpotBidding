@@ -798,7 +798,7 @@ class BiddingEngine {
         strategy: IBiddingStrategy
     ): Promise<void> {
         // Rule 1: Only bid in the last 10 seconds
-        if (data.bidClosingIn > 10000) {
+        if (data.bidClosingIn > 10) {
             return;
         }
 
